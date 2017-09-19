@@ -1,0 +1,10 @@
+Ggplot2
+#rotate x axis labels
+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+Others
+#replacing na values in column x with values in columny
+df$x[is.na(df$x)] <- df$y[is.na(df$x)]
+Strsplt
+#splitting string and keeping only the nth string
+x$filenames = sapply(strsplit(x$filenames,","), `[`, 7)
