@@ -5,6 +5,22 @@ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 Others
 #replacing na values in column x with values in columny
 df$x[is.na(df$x)] <- df$y[is.na(df$x)]
+
 Strsplt
 #splitting string and keeping only the nth string
 x$filenames = sapply(strsplit(x$filenames,","), `[`, 7)
+
+Loops
+#Calculate median for all columns for each factor in single column
+num = 25
+for (i in 2:num) {
+  x = aggregate(df13[,i], by = list(df13$tumor_code.x), FUN = median, na.rm = T)
+  if (exists('df13_median') == FALSE) {
+    df13_median = x
+  } else {df13_median = merge(df13_median, x, by= 'Group.1' ,all = TRUE)}
+  print(head(df13_median))
+}
+colnames(df13_median)[1] = 'tumor_code'
+colnames(df13_median)[2:23] = c(1:22)
+colnames(df13_median)[24] = 'X'
+colnames(df13_median)[25] = 'Y'
