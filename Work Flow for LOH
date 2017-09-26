@@ -1,4 +1,7 @@
 ##Bash
+#Removing indels and multiallelic snps 
+vcftools --gzvcf input.vcf.gz --max-alleles 2 --remove-indels --out outputname
+
 #Removing information starting wtih ##
 grep -v '^##' input.file > output.file
 
