@@ -3,8 +3,3 @@ for i in *.gz; do zcat $i | grep -v '^#' | cut -f1 | uniq -c | sed -e 's/^ *//;s
 
 #Pipeline to extract chr, position, mutations, REF, ALT, info(VAF, talt count and t_ref_count)
 zcat | grep -v '^##' | cut --complement -f3,6,7 | 
-
-sed '/Callers/,/VAF/ s/.*(VAF)/VAF/'
-
-# Removing everything after allele count
-sed 's/;Variant_Classification.*//'
