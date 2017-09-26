@@ -14,7 +14,8 @@ sed 's/dbsnp.*;t_alt/t_alt/'
 sed 's/repeat.*;t_alt/t_alt/'
 
 # Removing everything after allele count
-sed 's/;Variant_Classification.*//'
+sed 's/$/placeholder/'
+sed 's/;Variant_Classification.*placeholder//'
 
 #Overall pipeline
-zcat | grep -v '^##' | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/;Variant_Classification.*//' | sed 's/1000.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/'
+for i in *.gz; do zcat $i| grep -v '^##' | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' > "$i.filt.txt" ; done
