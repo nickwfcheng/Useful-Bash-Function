@@ -1,15 +1,20 @@
-##Bash
+##Bash - Filtering extraction sample
 #Removing indels and multiallelic snps 
-vcftools --gzvcf input.vcf.gz --max-alleles 2 --remove-indels --out outputname
+vcftools --gzvcf input.vcf.gz --max-alleles 2 --remove-indels --recode --out outputname
 
 #Removing information starting wtih ##
 grep -v '^##' input.file > output.file
 
 #Cutting unwanted columns
-cut --complement -f3,6,7,8 input.file > output.file
+cut --complement -f3,6,7,8,9 input.file > output.file
 
 #Keeping only hetero-/homozygous information in samples
 sed 's/\:\S*//g' input.file > output.file
 
-#CURRENT PIPELINE
-grep -v '^##' input.file | cut --complement -f3,6,7,8 | sed 's/\:\S*//g'
+#Removing '#' from  Chrom in header
+sed 's/#//'
+
+#Overall pipline 1
+grep -v '^##' input.file | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//'
+
+
