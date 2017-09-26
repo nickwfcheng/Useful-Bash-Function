@@ -1,0 +1,12 @@
+##Bash
+#Removing information starting wtih ##
+grep -v '^##' input.file > output.file
+
+#Cutting unwanted columns
+cut --complement -f3,6,7,8 input.file > output.file
+
+#Keeping only hetero-/homozygous information in samples
+sed 's/\:\S*//g' input.file > output.file
+
+#CURRENT PIPELINE
+grep -v '^##' input.file | cut --complement -f3,6,7,8 | sed 's/\:\S*//g'
