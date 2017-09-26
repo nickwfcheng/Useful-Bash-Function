@@ -1,0 +1,20 @@
+##Bash
+#Pipeline to extract chr, position, mutations, REF, ALT, info(VAF, talt count and t_ref_count)
+zcat | grep -v '^##' | cut --complement -f3,6,7 | 
+
+#Removing everything before VAF
+sed 's/Callers.*VAF/VAF/' 
+
+#Removing everything remaining before VAF
+sed 's/1000.*VAF/VAF/' 
+
+#Removing everything between cosmic and t_alt
+sed 's/cosmic.*;t_alt/t_alt/'
+sed 's/dbsnp.*;t_alt/t_alt/'
+sed 's/repeat.*;t_alt/t_alt/'
+
+# Removing everything after allele count
+sed 's/;Variant_Classification.*//'
+
+#Overall pipeline
+zcat | grep -v '^##' | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/;Variant_Classification.*//' | sed 's/1000.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/'
