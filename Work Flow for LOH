@@ -85,6 +85,27 @@ tumor_data_binary = tumor_data_combined_1
 tumor_data_binary[4:ncol(tumor_data_binary)] = ifelse(is.na(tumor_data_binary[4:ncol(tumor_data_binary)]) == T, 0, 1)
 
 
+#To do
+#Convert header of germ cell data into same sample id of tumor data
+
+
+#Check unmatching dataframes column names
+https://stackoverflow.com/questions/28782654/r-finding-unmatched-column-names-of-data-frames
+setdiff(germ_data_1, tumor_data_binary)
+
+#Remove unmatching dataframe column names
+
+
+#Order column names 
+germ_data_1[,order(colnames(germ_data_1))]
+tumor_data_binary[,order(colnames(tumor_data_binary))]
+
+#Convert dataframes into list containing individual columns
+
+#Merge list of dataframes based on similar column names
+
+#
+
 
 
 
