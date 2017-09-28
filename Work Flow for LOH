@@ -139,13 +139,13 @@ tumor_data_t_gid = rbind(tumor_data_t[1:3,], tumor_data_t_gid)
 #Fixing germ data name
 rownames(germ_data_t) = gsub('[.]','-',rownames(germ_data_t))
 
-##WIP
 #Converting transpose dataframes back to normal
 tumor_data_gid = t(tumor_data_t_gid)
 germ_data_gid = t(germ_data_t)
 
 #Change colnames of binary tumor df to germline ids
-colnames(tumor_data_binary)[,4:ncol(tumor_data_binary)] = colnames(tumor_data_gid)[,4:ncol(tumor_data_gid)]
+tumor_data_binary_gid = tumor_data_binary
+colnames(tumor_data_binary_gid)[4:ncol(tumor_data_binary_gid)] = colnames(tumor_data_gid)[4:ncol(tumor_data_gid)]
 
 
 ##To do
