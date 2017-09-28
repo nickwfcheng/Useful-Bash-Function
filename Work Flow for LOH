@@ -84,9 +84,46 @@ tumor_data_combined_1 = tumor_data_combined_1[,-2]
 tumor_data_binary = tumor_data_combined_1
 tumor_data_binary[4:ncol(tumor_data_binary)] = ifelse(is.na(tumor_data_binary[4:ncol(tumor_data_binary)]) == T, 0, 1)
 
+#Renaming and removing unneeded files
+tumor_data = tumor_data_combined_1
+germ_data = germ_data_1
+rm(germ_data_1)
+rm(tumor_data_combined_1)
+rm(tumor_data_combined)
 
-#To do
+##WIP
+id_df = read.csv(file = 'id_no.csv', header = T)
+id_df = id_df[,1:3]
+colnames(id_df) = c('germ_data_t_id', 'tumor_data_t_id', 'tumor_type')
+id_df = id_df[c(3,1,2)]
+x = str_split_fixed(id_df$tumor_data_t_id, ",", 10)
+id_df = id_df[1:2]
+id_df = cbind(id_df, x)
+
+germ_data_t_id = germ_data_t[,1] 
+germ_data_t_id = germ_data_t_id[-1]
+germ_data_t_id = germ_data_t_id[-1]
+germ_data_t_id = germ_data_t_id[-1]
+for (i in 1:length(germ_data_t_id)) {
+  tmp = 3+i
+  germ_data_t_id[i] = rownames(germ_data_t)[tmp]
+}
+germ_data_t_id = as.data.frame(germ_data_t_id)
+
+tumor_data_t_id = tumor_data_t[,1] 
+tumor_data_t_id = tumor_data_t_id[-1]
+tumor_data_t_id = tumor_data_t_id[-1]
+tumor_data_t_id = tumor_data_t_id[-1]
+for (i in 1:length(tumor_data_t_id)) {
+  tmp = 3+i
+  tumor_data_t_id[i] = rownames(tumor_data_t)[tmp]
+}
+tumor_data_t_id = as.data.frame(tumor_data_t_id)
+
+##To do
+
 #Convert header of germ cell data into same sample id of tumor data
+tumor_data_t = t(tumor_data)
 
 
 #Check unmatching dataframes column names
