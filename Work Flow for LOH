@@ -169,16 +169,28 @@ tumor_df_filt = semi_join(tumor_data_gid_vaf, germ_data_gid, by = 'chrom_pos');
 germ_unmatch_pos= setdiff(germ_data_gid[,1], tumor_data_gid_vaf[,1]);
 tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 
+#Moving filtered dfs to new R file
+saveRDS(germ_df_filt, 'germ_df')
+saveRDS(tumor_df_filt, 'tumor_df')
 
-##WIP 
+#In new R
+germ_df = readRDS('germ_df')
+tumor_df = readRDS('tumor_df')
+
 #Removing unmatching column names (ids)
-unmatching_id_tumor = setdiff(names(tumor_data_gid_vaf), names(germ_data_gid))
-tumor_df_filt1= subset(tumor_df_filt, select= -c(unmatching_id_tumor))
-unmatching_id_germ = setdiff(names(germ_data_gid), names(tumor_data_gid_vaf))
-germ_df_filt1 = subset(germ_df_filt, select= -c(unmatching_id_germ))
+unmatching_id_tumor = setdiff(names(tumor_df), names(germ_df))
+for (i in length(unmatching_id_tumor)) {
+  germ_df[,unmatching_id_tumor[i]] = NULL
+}
+unmatching_id_germ = setdiff(names(germ_df), names(tumor_df))
+for (i in length(unmatching_id_germ)) {
+  germ_df[,unmatching_id_germ[i]] = NULL
+}
+
 
 ##To do
-#Remove unmatching dataframe column names
+#Filtering
+https://datascienceplus.com/subsetting-datasets-in-r/
 
 
 #Order column names 
