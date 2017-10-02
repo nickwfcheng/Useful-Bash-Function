@@ -170,32 +170,54 @@ germ_unmatch_pos= setdiff(germ_data_gid[,1], tumor_data_gid_vaf[,1]);
 tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 
 #Moving filtered dfs to new R file
-saveRDS(germ_df_filt, 'germ_df')
-saveRDS(tumor_df_filt, 'tumor_df')
+saveRDS(germ_df_filt, 'germ_df');
+saveRDS(tumor_df_filt, 'tumor_df');
 
 #In new R
 germ_df = readRDS('germ_df')
 tumor_df = readRDS('tumor_df')
 
 #Removing unmatching column names (ids)
-unmatching_id_tumor = setdiff(names(tumor_df), names(germ_df))
+unmatching_id_tumor = setdiff(names(tumor_df), names(germ_df));
 for (i in length(unmatching_id_tumor)) {
   germ_df[,unmatching_id_tumor[i]] = NULL
-}
-unmatching_id_germ = setdiff(names(germ_df), names(tumor_df))
+};
+unmatching_id_germ = setdiff(names(germ_df), names(tumor_df));
 for (i in length(unmatching_id_germ)) {
   germ_df[,unmatching_id_germ[i]] = NULL
+};
+
+#Diving between homo-(0) or hetero-(1) positions for germ sample
+for (i in 1:ncol(germ_df)) {
+  germ_df[,i] = as.character(germ_df[,i])
+}
+germ_df[4:ncol(germ_df)] = ifelse(germ_df[4:ncol(germ_df)] == '0/1' | germ_df[4:ncol(germ_df)] =='1/0' , 1, 0)
+for (i in 1:ncol(germ_df)) {
+  germ_df[,i] = as.factor(germ_df[,i])
 }
 
+#Reorder samples alphabetically
+tmp = germ_df[,-c(1:3)]
+tmp1 = germ_df[,c(1:3)]
+tmp = tmp[,order(names(tmp))]
+germ_df = cbind(tmp1, tmp)
+
+tmp = tumor_df[,-c(1:3)]
+tmp1 = tumor_df[,c(1:3)]
+tmp = tmp[,order(names(tmp))]
+tumor_df = cbind(tmp1, tmp)
+rm(tmp)
+rm(tmp1)
+
+#Breaking down dataframe to list of df for each sample
 
 ##To do
 #Filtering
 https://datascienceplus.com/subsetting-datasets-in-r/
 
 
-#Order column names 
-germ_data_1[,order(colnames(germ_data_1))]
-tumor_data_binary[,order(colnames(tumor_data_binary))]
+
+
 
 #Convert dataframes into list containing individual columns
 
