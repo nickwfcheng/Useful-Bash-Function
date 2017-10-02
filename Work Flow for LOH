@@ -165,7 +165,7 @@ for (i in 4:ncol(tumor_data_gid_vaf)) {
 germ_data_gid = as.data.frame(germ_data_gid);
 library(dplyr);
 germ_df_filt = semi_join(germ_data_gid, tumor_data_gid_vaf, by = 'chrom_pos');
-tumor_df_filt = semi_join(tumor_data_gid_vaf, gern_data_gid, by = 'chrom_pos');
+tumor_df_filt = semi_join(tumor_data_gid_vaf, germ_data_gid, by = 'chrom_pos');
 germ_unmatch_pos= setdiff(germ_data_gid[,1], tumor_data_gid_vaf[,1]);
 tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 
