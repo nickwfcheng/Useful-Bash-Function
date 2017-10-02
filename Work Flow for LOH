@@ -159,21 +159,23 @@ for (i in 4:ncol(tumor_data_gid_vaf)) {
   tumor_data_gid_vaf[,i] = as.numeric(as.character(tumor_data_gid_vaf[,i]))
 }
 
-
-##WIP 
 #Filtering unmatching rows between df's 
 germ_data_gid = as.data.frame(germ_data_gid);
 library(dplyr);
+germ_data_gid[,1] = as.character(germ_data_gid[,1])
+tumor_data_gid_vaf[,1] = as.character(tumor_data_gid_vaf[,1])
 germ_df_filt = semi_join(germ_data_gid, tumor_data_gid_vaf, by = 'chrom_pos');
 tumor_df_filt = semi_join(tumor_data_gid_vaf, germ_data_gid, by = 'chrom_pos');
 germ_unmatch_pos= setdiff(germ_data_gid[,1], tumor_data_gid_vaf[,1]);
 tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 
+
+##WIP 
 #Removing unmatching column names (ids)
 unmatching_id_tumor = setdiff(names(tumor_data_gid_vaf), names(germ_data_gid))
-tumor_df_filt1= subset(tumor_df_filt, select= -(unmatching_id_tumor))
+tumor_df_filt1= subset(tumor_df_filt, select= -c(unmatching_id_tumor))
 unmatching_id_germ = setdiff(names(germ_data_gid), names(tumor_data_gid_vaf))
-germ_df_filt1 = subset(germ_df_filt, select= -(unmatching_id_germ))
+germ_df_filt1 = subset(germ_df_filt, select= -c(unmatching_id_germ))
 
 ##To do
 #Remove unmatching dataframe column names
@@ -184,8 +186,6 @@ germ_data_1[,order(colnames(germ_data_1))]
 tumor_data_binary[,order(colnames(tumor_data_binary))]
 
 #Convert dataframes into list containing individual columns
-
-#Merge list of dataframes based on similar column names
 
 #
 
