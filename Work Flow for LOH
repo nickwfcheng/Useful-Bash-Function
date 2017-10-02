@@ -147,16 +147,35 @@ germ_data_gid = t(germ_data_t)
 tumor_data_binary_gid = tumor_data_binary
 colnames(tumor_data_binary_gid)[4:ncol(tumor_data_binary_gid)] = colnames(tumor_data_gid)[4:ncol(tumor_data_gid)]
 
+#Only keeping VAF values in tumor dataframe
+tumor_data_gid_vaf = gsub(';t_alt_count.*', '', tumor_data_gid)
+tumor_data_gid_vaf = gsub(';t_ref_count.*', '', tumor_data_gid_vaf)
+tumor_data_gid_vaf = gsub('Callers.*', NA, tumor_data_gid_vaf)
+tumor_data_gid_vaf = gsub(';.*', '', tumor_data_gid_vaf)
+tumor_data_gid_vaf = gsub('VAF=', '', tumor_data_gid_vaf)
+tumor_data_gid_vaf[is.na(tumor_data_gid_vaf)] <- 0
+tumor_data_gid_vaf = as.data.frame(tumor_data_gid_vaf)
+for (i in 4:ncol(tumor_data_gid_vaf)) {
+  tumor_data_gid_vaf[,i] = as.numeric(as.character(tumor_data_gid_vaf[,i]))
+}
+
+
+##WIP 
+#Filtering unmatching rows between df's 
+germ_data_gid = as.data.frame(germ_data_gid);
+library(dplyr);
+germ_df_filt = semi_join(germ_data_gid, tumor_data_gid_vaf, by = 'chrom_pos');
+tumor_df_filt = semi_join(tumor_data_gid_vaf, gern_data_gid, by = 'chrom_pos');
+germ_unmatch_pos= setdiff(germ_data_gid[,1], tumor_data_gid_vaf[,1]);
+tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
+
+#Removing unmatching column names (ids)
+unmatching_id_tumor = setdiff(names(tumor_data_gid_vaf), names(germ_data_gid))
+tumor_df_filt1= subset(tumor_df_filt, select= -(unmatching_id_tumor))
+unmatching_id_germ = setdiff(names(germ_data_gid), names(tumor_data_gid_vaf))
+germ_df_filt1 = subset(germ_df_filt, select= -(unmatching_id_germ))
 
 ##To do
-#Convert header of germ cell data into same sample id of tumor data
-tumor_data_t = t(tumor_data)
-
-
-#Check unmatching dataframes column names
-https://stackoverflow.com/questions/28782654/r-finding-unmatched-column-names-of-data-frames
-setdiff(germ_data_1, tumor_data_binary)
-
 #Remove unmatching dataframe column names
 
 
