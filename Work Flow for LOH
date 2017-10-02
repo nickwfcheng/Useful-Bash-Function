@@ -210,6 +210,24 @@ rm(tmp)
 rm(tmp1)
 
 #Breaking down dataframe to list of df for each sample
+tumor_list = list()
+for (i in 4:ncol(tumor_df)) {
+  num = i - 3
+      tmp = tumor_df[,c(1:3)]
+      tmp1 = tumor_df[,i]  
+      tumor_list[[num]] = cbind(tmp, tmp1)
+      colnames(tumor_list[[num]])[4] = colnames(tumor_df)[i]
+}
+
+germ_list = list()
+for (i in 4:ncol(germ_df)) {
+  num = i - 3
+  tmp = germ_df[,c(1:3)]
+  tmp1 = germ_df[,i]  
+  germ_list[[num]] = cbind(tmp, tmp1)
+  colnames(germ_list[[num]])[4] = colnames(germ_df)[i]
+}
+
 
 ##To do
 #Filtering
