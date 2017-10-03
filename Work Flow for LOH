@@ -173,7 +173,7 @@ tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 saveRDS(germ_df_filt, 'germ_df');
 saveRDS(tumor_df_filt, 'tumor_df');
 
-#In new R
+##In new R
 germ_df = readRDS('germ_df')
 tumor_df = readRDS('tumor_df')
 
@@ -209,19 +209,60 @@ tumor_df = cbind(tmp1, tmp)
 rm(tmp)
 rm(tmp1)
 
+#Reorder chromosomes 
+library(stringr)
+tumor_chrpos = str_split_fixed(tumor_df$'chrom_pos', ":", 2)
+colnames(tumor_chrpos)[1:2] = c('chr','chrpos')
+tumor_df = cbind(tumor_chrpos, tumor_df[,-1])
+
+germ_chrpos = str_split_fixed(germ_df$'chrom_pos', ":", 2)
+colnames(germ_chrpos)[1:2] = c('chr','chrpos')
+germ_df = cbind(germ_chrpos, germ_df[,-1])
+
+tumor_df[,1] = as.factor(as.character(tumor_df[,1]))
+tumor_df[,2] = as.numeric(as.character(tumor_df[,2]))
+tumor_df[,1] = ordered(tumor_df[,1], levels = c('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'))
+tumor_df = tumor_df[order(tumor_df$chr,tumor_df$chrpos),]
+row.names(tumor_df) <- 1:nrow(tumor_df)
+
+germ_df[,1] = as.factor(as.character(germ_df[,1]))
+germ_df[,2] = as.numeric(as.character(germ_df[,2]))
+germ_df[,1] = ordered(germ_df[,1], levels = c('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'))
+germ_df = germ_df[order(germ_df$chr,germ_df$chrpos),]
+row.names(germ_df) <- 1:nrow(germ_df)
+
+#Joining chrom and pos together again
+germ_df[,1] = as.character(germ_df[,1])
+germ_df[,2] = as.character(germ_df[,2])
+chrom_pos = as.character(paste(germ_df$chr, germ_df$chrpos, sep=':'))
+germ_df = cbind(chrom_pos, germ_df)
+rm(chrom_pos)
+germ_df = germ_df[,-2]
+germ_df = germ_df[,-2]
+
+tumor_df[,1] = as.character(tumor_df[,1])
+tumor_df[,2] = as.character(tumor_df[,2])
+chrom_pos = as.character(paste(tumor_df$chr, tumor_df$chrpos, sep=':'))
+tumor_df = cbind(chrom_pos,tumor_df)
+rm(chrom_pos)
+tumor_df = tumor_df[,-2]
+tumor_df = tumor_df[,-2]
+
+tumor_df[tumor_df == 0] <- NA
+
 #Breaking down dataframe to list of df for each sample
 tumor_df[,1] = as.character(tumor_df[,1])
 tumor_list = list()
 for (i in 4:ncol(tumor_df)) {
   num = i - 3
-      tmp = tumor_df[,c(1:3)]
-      tmp1 = tumor_df[,i]  
-      tumor_list[[num]] = cbind(tmp, tmp1)
-      colnames(tumor_list[[num]])[4] = colnames(tumor_df)[i]
+  tmp = tumor_df[,c(1:3)]
+  tmp1 = tumor_df[,i]  
+  tumor_list[[num]] = cbind(tmp, tmp1)
+  colnames(tumor_list[[num]])[4] = colnames(tumor_df)[i]
 }
 for (i in 1:5) { 
   tumor_list[[i]] = tumor_list[[i]][,c(1,4)]
-  }
+}
 
 germ_df[,1] = as.character(germ_df[,1])
 germ_list = list()
@@ -238,12 +279,14 @@ merged = germ_list
 for (i in 1:5){
   merged[[i]] = cbind(germ_list[[i]],tumor_list[[i]][2])
 }
+
+
 ##R - Binary analysis (whether VAF greater than threshhold + germline heterozygosity)
 #Creating new column for each sample that based on presence of heterozygous germ snp and VAF threshhold (y)
-VAF.filt <- function(x,y) {
+VAF.filt <- function(x,y,z) {
   tmp = x
   for (i in 1:length(tmp)) {
-    tmp[[i]][6] = ifelse(tmp[[i]][4] == 1 & tmp[[i]][5] >= y, tmp[[i]][6] <- 1, tmp[[i]][6] <- 0)
+    tmp[[i]][6] = ifelse(tmp[[i]][4] == 1 & (tmp[[i]][5] >= y | tmp[[i]][5] <= z) , tmp[[i]][6] <- 1, tmp[[i]][6] <- 0)
     num = i + 3
     colnames(tmp[[i]])[6] = "V6"
   }
@@ -251,10 +294,12 @@ VAF.filt <- function(x,y) {
   return(x)
 }
 
-vaf0.1 = VAF.filt(merged, 0.1)
-vaf0.25 = VAF.filt(merged, 0.25)
-vaf0.5 = VAF.filt(merged, 0.5)
+vaf0 = VAF.filt(merged, 0,100)
+vaf0.1 = VAF.filt(merged, 0.1,0.9)
+vaf0.25 = VAF.filt(merged, 0.25,0.75)
+vaf0.5 = VAF.filt(merged, 0.4,0.6)
 
+vaf0 = lapply(vaf0, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 vaf0.1 = lapply(vaf0.1, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 vaf0.25 = lapply(vaf0.25, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 vaf0.5 = lapply(vaf0.5, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
@@ -269,6 +314,7 @@ VAF.naming <- function(x,namesdf) {
   return(x)
 }
 
+vaf0 = VAF.naming(vaf0, germ_df)
 vaf0.1 = VAF.naming(vaf0.1, germ_df)
 vaf0.25 = VAF.naming(vaf0.25, germ_df)
 vaf0.5 = VAF.naming(vaf0.5, germ_df)
@@ -277,13 +323,12 @@ vaf0.5 = VAF.naming(vaf0.5, germ_df)
 merge.all <- function(x, y) {
   cbind(x, y)
 }
+vaf0_all <- Reduce(merge.all, vaf0)
 vaf0.1_all <- Reduce(merge.all, vaf0.1)
 vaf0.25_all <- Reduce(merge.all, vaf0.25)
 vaf0.5_all <- Reduce(merge.all, vaf0.5)
 
+vaf0_all = vaf0_all[,-c(3,5,7,9)]
 vaf0.1_all = vaf0.1_all[,-c(3,5,7,9)]
 vaf0.25_all = vaf0.25_all[,-c(3,5,7,9)]
 vaf0.5_all = vaf0.5_all[,-c(3,5,7,9)]
-
-
-
