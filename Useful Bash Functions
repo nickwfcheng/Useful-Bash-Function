@@ -3,3 +3,6 @@ for i in *.gz; do zcat $i | grep -v '^#' | cut -f1 | uniq -c | sed -e 's/^ *//;s
 
 #Pipeline to extract chr, position, mutations, REF, ALT, info(VAF, talt count and t_ref_count)
 zcat | grep -v '^##' | cut --complement -f3,6,7 | 
+
+#Creating symbolic links
+for i in *.filt.txt; do ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/$i; done
