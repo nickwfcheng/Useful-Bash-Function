@@ -300,12 +300,12 @@ VAF.filt <- function(x,y,z) {
 vaf0 = VAF.filt(merged, 0,100)
 vaf0.1 = VAF.filt(merged, 0.1,0.9)
 vaf0.25 = VAF.filt(merged, 0.25,0.75)
-vaf0.5 = VAF.filt(merged, 0.4,0.6)
+vaf0.4 = VAF.filt(merged, 0.4,0.6)
 
 vaf0 = lapply(vaf0, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 vaf0.1 = lapply(vaf0.1, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 vaf0.25 = lapply(vaf0.25, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
-vaf0.5 = lapply(vaf0.5, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
+vaf0.4 = lapply(vaf0.4, function(z) z[(names(z) %in% c("chrom_pos","V6"))])
 
 VAF.naming <- function(x,namesdf) {
   tmp = x
@@ -320,18 +320,38 @@ VAF.naming <- function(x,namesdf) {
 vaf0 = VAF.naming(vaf0, germ_df)
 vaf0.1 = VAF.naming(vaf0.1, germ_df)
 vaf0.25 = VAF.naming(vaf0.25, germ_df)
-vaf0.5 = VAF.naming(vaf0.5, germ_df)
+vaf0.4 = VAF.naming(vaf0.4, germ_df)
 
 #Remerging list of dataframes
 merge.all <- function(x, y) {
   cbind(x, y)
 }
-vaf0_all <- Reduce(merge.all, vaf0)
-vaf0.1_all <- Reduce(merge.all, vaf0.1)
-vaf0.25_all <- Reduce(merge.all, vaf0.25)
-vaf0.5_all <- Reduce(merge.all, vaf0.5)
+vaf0_all <- Reduce(merge.all, vaf0);
+vaf0.1_all <- Reduce(merge.all, vaf0.1);
+vaf0.25_all <- Reduce(merge.all, vaf0.25);
+vaf0.4_all <- Reduce(merge.all, vaf0.4);
 
-vaf0_all = vaf0_all[,-c(3,5,7,9)]
-vaf0.1_all = vaf0.1_all[,-c(3,5,7,9)]
-vaf0.25_all = vaf0.25_all[,-c(3,5,7,9)]
-vaf0.5_all = vaf0.5_all[,-c(3,5,7,9)]
+vaf0_all = vaf0_all[,-c(seq(3, ncol(vaf0_all), 2))];
+vaf0.1_all = vaf0.1_all[,-c(seq(3, ncol(vaf0.1_all), 2))];
+vaf0.25_all = vaf0.25_all[,-c(seq(3, ncol(vaf0.25_all), 2))];
+vaf0.4_all = vaf0.4_all[,-c(seq(3, ncol(vaf0.4_all), 2))];
+
+#Summarising each position
+vaf.summary <- function(x) {
+  tmp = x
+  tmp[is.na(tmp)] <- 0
+  total_count = ncol(tmp) + 1
+  tmp[,total_count] = rowSums(tmp[,2:ncol(tmp)])
+  colnames(tmp)[total_count] = 'total_count'
+  tmp = tmp[,c(1,total_count)]
+  x = tmp
+  return(x)
+ };
+
+vaf0_summary = vaf.summary(vaf0_all);
+vaf0.1_summary = vaf.summary(vaf0.1_all);
+vaf0.25_summary = vaf.summary(vaf0.25_all);
+vaf0.4_summary = vaf.summary(vaf0.4_all)
+
+#Plots to make
+
