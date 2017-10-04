@@ -45,20 +45,6 @@ for i in *.gz; do zcat $i| grep -v '^##' | cut --complement -f3,6,7 | sed 's/Cal
 
 
 ##R - Cleaning/combining data
-#Import germ samples into R as df
-germ_data = read.table(file = 'first5.txt', sep = '\t', header = T);
-
-##Germ
-#Joining chrom and pos together for germline samples
-chrom_pos = paste(germ_data$CHROM, germ_data$POS, sep=':');
-germ_data_1 = cbind(chrom_pos, germ_data);
-rm(chrom_pos);
-germ_data_1 = germ_data_1[,-2];
-germ_data_1 = germ_data_1[,-2];
-
-#Cleaning germline sample headings
-colnames(germ_data_1) = sub("X", "", colnames(germ_data_1))
-
 ##Tumor
 #Import tumor samples into R as list of df
 tumor_files = list.files(pattern = "*.filt.txt");
@@ -81,6 +67,19 @@ rm(chrom_pos);
 tumor_data_combined_1 = tumor_data_combined_1[,-2];
 tumor_data_combined_1 = tumor_data_combined_1[,-2];
 
+#Import germ samples into R as df
+germ_data = read.table(file = 'first5.txt', sep = '\t', header = T);
+
+##Germ
+#Joining chrom and pos together for germline samples
+chrom_pos = paste(germ_data$CHROM, germ_data$POS, sep=':');
+germ_data_1 = cbind(chrom_pos, germ_data);
+rm(chrom_pos);
+germ_data_1 = germ_data_1[,-2];
+germ_data_1 = germ_data_1[,-2];
+
+#Cleaning germline sample headings
+colnames(germ_data_1) = sub("X", "", colnames(germ_data_1))
 
 ##R - Detecting matching chrom positions between tumor and germ cell samples
 #Determine whether variant is present at chr position in each tumor sample
