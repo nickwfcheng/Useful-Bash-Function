@@ -354,4 +354,12 @@ vaf0.25_summary = vaf.summary(vaf0.25_all);
 vaf0.4_summary = vaf.summary(vaf0.4_all)
 
 #Plots to make
+VAF threshold vs common site count
+Count at each position per threshhold
+Count for each chromosome per threshold
+Heatmap of count per chr per tumor
+
+#Analysis
+Highest count regions/tumors
+Specific positions/genes
 
