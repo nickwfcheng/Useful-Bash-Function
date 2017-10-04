@@ -72,7 +72,7 @@ tumor_sample_id = gsub('.consensus.*', '', tumor.files)
 colnames(tumor_data_combined) = c('CHROM', 'POS', 'REF', 'ALT', tumor_sample_id)
 rm(merge.all)
 
-#Joining chrom and pos together for germline samples
+#Joining chrom and pos together for tumor samples
 chrom_pos = paste(tumor_data_combined$CHROM, tumor_data_combined$POS, sep=':')
 tumor_data_combined_1 = cbind(chrom_pos, tumor_data_combined)
 rm(chrom_pos)
