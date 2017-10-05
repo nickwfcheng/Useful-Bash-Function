@@ -6,3 +6,9 @@ zcat | grep -v '^##' | cut --complement -f3,6,7 |
 
 #Creating symbolic links
 for i in *.filt.txt; do ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/$i; done
+
+#Make script executable
+chmod +x input.sh
+
+#making script
+##!/bin/bash;
