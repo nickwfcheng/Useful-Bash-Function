@@ -15,7 +15,7 @@ sed 's/\:\S*//g' input.file > output.file
 sed 's/#//'
 
 #Overall germline pipline 1
-zcat input.file | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//'
+vcftools --gzvcf input.vcf.gz --max-alleles 2 --remove-indels --chr 21 --recode --out outputname| zcat | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//'
 
 ##Bash - Extracting tumor cell data
 #Pipeline to extract chr, position, mutations, REF, ALT, info(VAF, talt count and t_ref_count)
