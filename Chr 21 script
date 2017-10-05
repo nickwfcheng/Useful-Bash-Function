@@ -5,5 +5,5 @@ vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 21 --recode --ou
 zcat *chr21* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr21.txt; 
 cd tumor_dat/chr21; 
 ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr21.txt 
-module load R/3.4.0-gcc ;./LoH.R
+module load R/3.4.0-gcc ;./LoH21.R
 
