@@ -1,9 +1,337 @@
 cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
-for i in *.gz; do zcat $i| grep ^21 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr21/"$i.filt.txt" ; done
+for i in *.gz; do zcat $i| grep -w ^21 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr21/"$i.filt.txt" ; done
 cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
 vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 21 --recode --out chr21; 
 zcat *chr21* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr21.txt; 
 cd tumor_dat/chr21; 
 ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr21.txt 
-module load R/3.4.0-gcc ;./LoH21.R
+module load R/3.4.0-gcc ;
+./LoH21.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr21/germ_df21;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr21/tumor_df21
+
+#Chr1
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^1 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr1/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 1 --recode --out chr1; 
+zcat *chr1* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr1.txt; 
+cd tumor_dat/chr1; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr1.txt 
+module load R/3.4.0-gcc ;
+./LoH1.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr1/germ_df1;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr1/tumor_df1
+
+#Chr2
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep ^2 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr2/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 2 --recode --out chr2; 
+zcat *chr2* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr2.txt; 
+cd tumor_dat/chr2; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr2.txt 
+module load R/3.4.0-gcc ;
+./LoH2.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr2/germ_df2;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr2/tumor_df2
+
+#Chr3
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep ^3 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr3/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 3 --recode --out chr3; 
+zcat *chr3* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr3.txt; 
+cd tumor_dat/chr3; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr3.txt 
+module load R/3.4.0-gcc ;
+./LoH3.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr3/germ_df3;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr3/tumor_df3
+
+#Chr4
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^4 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr4/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 4 --recode --out chr4; 
+zcat *chr4* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr4.txt; 
+cd tumor_dat/chr4; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr4.txt 
+module load R/3.4.0-gcc ;
+./LoH4.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr4/germ_df4;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr4/tumor_df4
+
+#Chr5
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^5 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr5/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 5 --recode --out chr5; 
+zcat *chr5* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr5.txt; 
+cd tumor_dat/chr5; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr5.txt 
+module load R/3.4.0-gcc ;
+./LoH5.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr5/germ_df5;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr5/tumor_df5
+
+#Chr6
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^6 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr6/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 6 --recode --out chr6; 
+zcat *chr6* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr6.txt; 
+cd tumor_dat/chr6; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr6.txt 
+module load R/3.4.0-gcc ;
+./LoH6.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr6/germ_df6;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr6/tumor_df6
+
+#Chr7
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^7 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr7/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 7 --recode --out chr7; 
+zcat *chr7* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr7.txt; 
+cd tumor_dat/chr7; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr7.txt 
+module load R/3.4.0-gcc ;
+./LoH7.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr7/germ_df7;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr7/tumor_df7
+
+#Chr8
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^8 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr8/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 8 --recode --out chr8; 
+zcat *chr8* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr8.txt; 
+cd tumor_dat/chr8; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr8.txt 
+module load R/3.4.0-gcc ;
+./LoH8.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr8/germ_df8;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr8/tumor_df8
+
+#Chr9
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^9 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr9/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 9 --recode --out chr9; 
+zcat *chr9* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr9.txt; 
+cd tumor_dat/chr9; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr9.txt 
+module load R/3.4.0-gcc ;
+./LoH9.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr9/germ_df9;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr9/tumor_df9
+
+#Chr10
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^10 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr10/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 10 --recode --out chr10; 
+zcat *chr10* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr10.txt; 
+cd tumor_dat/chr10; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr10.txt 
+module load R/3.4.0-gcc ;
+./LoH10.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr10/germ_df10;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr10/tumor_df10
+
+#Chr11
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^11 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr11/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 11 --recode --out chr11; 
+zcat *chr11* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr11.txt; 
+cd tumor_dat/chr11; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr11.txt 
+module load R/3.4.0-gcc ;
+./LoH11.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr11/germ_df11;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr11/tumor_df11
+
+#Chr12
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^12 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr12/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 12 --recode --out chr12; 
+zcat *chr12* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr12.txt; 
+cd tumor_dat/chr12; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr12.txt 
+module load R/3.4.0-gcc ;
+./LoH12.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr12/germ_df12;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr12/tumor_df12
+
+#Chr13
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^13 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr13/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 13 --recode --out chr13; 
+zcat *chr13* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr13.txt; 
+cd tumor_dat/chr13; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr13.txt 
+module load R/3.4.0-gcc ;
+./LoH13.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr13/germ_df13;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr13/tumor_df13
+
+#Chr14
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^14 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr14/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 14 --recode --out chr14; 
+zcat *chr14* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr14.txt; 
+cd tumor_dat/chr14; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr14.txt 
+module load R/3.4.0-gcc ;
+./LoH14.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr14/germ_df14;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr14/tumor_df14
+
+#Chr15 
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^15 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr15/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 15 --recode --out chr15; 
+zcat *chr15* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr15.txt; 
+cd tumor_dat/chr15; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr15.txt 
+module load R/3.4.0-gcc ;
+./LoH15.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr15/germ_df15;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr15/tumor_df15
+
+#Chr16
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^16 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr16/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 16 --recode --out chr16; 
+zcat *chr16* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr16.txt; 
+cd tumor_dat/chr16; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr16.txt 
+module load R/3.4.0-gcc ;
+./LoH16.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr16/germ_df16;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr16/tumor_df16
+
+#Chr17
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^17 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr17/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 17 --recode --out chr17; 
+zcat *chr17* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr17.txt; 
+cd tumor_dat/chr17; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr17.txt 
+module load R/3.4.0-gcc ;
+./LoH17.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr17/germ_df17;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr17/tumor_df17
+
+#Chr18
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^18 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr18/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 18 --recode --out chr18; 
+zcat *chr18* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr18.txt; 
+cd tumor_dat/chr18; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr18.txt 
+module load R/3.4.0-gcc ;
+./LoH18.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr18/germ_df18;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr18/tumor_df18
+
+#Chr19
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^19 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr19/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 19 --recode --out chr19; 
+zcat *chr19* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr19.txt; 
+cd tumor_dat/chr19; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr19.txt 
+module load R/3.4.0-gcc ;
+./LoH19.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr19/germ_df19;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr19/tumor_df19
+
+#Chr20
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^20 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr20/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 20 --recode --out chr20; 
+zcat *chr20* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr20.txt; 
+cd tumor_dat/chr20; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr20.txt 
+module load R/3.4.0-gcc ;
+./LoH20.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr20/germ_df20;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr20/tumor_df20
+
+#Chr22
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^22 | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chr22/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr 22 --recode --out chr22; 
+zcat *chr22* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chr22.txt; 
+cd tumor_dat/chr22; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chr22.txt 
+module load R/3.4.0-gcc ;
+./LoH22.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr22/germ_df22;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr22/tumor_df22
+
+#ChrX
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^X | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chrX/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr X --recode --out chrX; 
+zcat *chrX* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chrX.txt; 
+cd tumor_dat/chrX; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chrX.txt 
+module load R/3.4.0-gcc ;
+./LoHX.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chrX/germ_dfX;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chrX/tumor_dfX
+
+#ChrY
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat;
+for i in *.gz; do zcat $i| grep -w ^Y | cut --complement -f3,6,7 | sed 's/Callers.*VAF/VAF/' | sed 's/1000g.*VAF/VAF/' | sed 's/cosmic.*;t_alt/t_alt/' | sed 's/dbsnp.*;t_alt/t_alt/' | sed 's/repeat.*;t_alt/t_alt/' | sed 's/$/placeholder/' | sed 's/;Variant_Classification.*placeholder//' | sed 's/;snv_near_indel//' | sed 's/placeholder//' | sed 's/#//' > chrY/"$i.filt.txt" ; done
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH;
+vcftools --gzvcf *.vcf.gz --max-alleles 2 --remove-indels --chr Y --recode --out chrY; 
+zcat *chrY* | grep -v '^##' | cut --complement -f3,6,7,8,9 | sed 's/\:\S*//g' | sed 's/#//' > chrY.txt; 
+cd tumor_dat/chrY; 
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/chrY.txt 
+module load R/3.4.0-gcc ;
+./LoHY.R;
+cd /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/filtered_dfs;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chrY/germ_dfY;
+ln -s /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chrY/tumor_dfY
+
+
 
