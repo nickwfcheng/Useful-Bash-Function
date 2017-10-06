@@ -128,3 +128,4 @@ tumor_unmatch_pos = setdiff(tumor_data_gid_vaf[,1], germ_data_gid[,1]);
 #Moving filtered dfs to new R file
 saveRDS(germ_df_filt, 'germ_df21');
 saveRDS(tumor_df_filt, 'tumor_df21');
+save.image(file = 'chr21.RData')
