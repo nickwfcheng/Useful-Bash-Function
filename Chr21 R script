@@ -36,7 +36,6 @@ germ_data_1 = germ_data_1[,-2];
 #Cleaning germline sample headings
 colnames(germ_data_1) = sub("X", "", colnames(germ_data_1));
 
-##R - Detecting matching chrom positions between tumor and germ cell samples
 #Determine whether variant is present at chr position in each tumor sample
 tumor_data_binary = tumor_data_combined_1;
 tumor_data_binary[4:ncol(tumor_data_binary)] = ifelse(is.na(tumor_data_binary[4:ncol(tumor_data_binary)]) == T, 0, 1);
