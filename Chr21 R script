@@ -1,4 +1,4 @@
-##Tumor - need to change germ input file name and final two lines
+#!/usr/bin/env Rscript
 #Import tumor samples into R as list of df
 tumor_files = list.files(pattern = "*.filt.txt");
 tumor_data = lapply(tumor_files, read.table, sep = '\t', header = F);
@@ -26,7 +26,6 @@ tumor_data_combined_1 = tumor_data_combined_1[,-2];
 #Import germ samples into R as df
 germ_data = read.table(file = 'chr21.txt', sep = '\t', header = T);
 
-##Germ
 #Joining chrom and pos together for germline samples
 chrom_pos = paste(germ_data$CHROM, germ_data$POS, sep=':');
 germ_data_1 = cbind(chrom_pos, germ_data);
