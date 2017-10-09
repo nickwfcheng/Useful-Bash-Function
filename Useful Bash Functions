@@ -12,3 +12,7 @@ chmod +x input.sh
 
 #making script
 ##!/bin/bash;
+
+#Remove empty files
+find /exec5/GROUP/awadalla/awadalla/awadalla_group/nwc17/germ_cell_data/LoH/tumor_dat/chr - empty -type f -delete
+ 
