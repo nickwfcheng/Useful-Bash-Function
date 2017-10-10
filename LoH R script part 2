@@ -217,23 +217,48 @@ vaf_normalised = ((vaf_combined_sum[-1]/(ncol(vaf0_all)-1))/chr_length[24])*10^6
 #Summary statistics - Matching samples to tumor types
 vaf0_t = t(vaf0_all[,-1])
 colnames(vaf0_t) = vaf0_all[,1]
+vaf0_t = as.data.frame(vaf0_t)
 
 vaf0.1_t = t(vaf0.1_all[,-1])
 colnames(vaf0.1_t) = vaf0.1_all[,1]
+vaf0.1_t = as.data.frame(vaf0.1_t)
 
 vaf0.2_t = t(vaf0.2_all[,-1])
 colnames(vaf0.2_t) = vaf0.2_all[,1]
+vaf0.2_t = as.data.frame(vaf0.2_t)
 
 vaf0.25_t = t(vaf0.25_all[,-1])
 colnames(vaf0.25_t) = vaf0.25_all[,1]
+vaf0.25_t = as.data.frame(vaf0.25_t)
 
 vaf0.3_t = t(vaf0.3_all[,-1])
 colnames(vaf0.3_t) = vaf0.3_all[,1]
+vaf0.3_t = as.data.frame(vaf0.3_t)
 
 vaf0.4_t = t(vaf0.4_all[,-1])
 colnames(vaf0.4_t) = vaf0.4_all[,1]
+vaf0.4_t = as.data.frame(vaf0.4_t)
+
+id_tumor = read.csv(file = 'id_no.csv', header = T)
+id_tumor = id_tumor[,c(1,3)]
+colnames(id_tumor) = c('germ_data_id', 'tumor_type')
+
+germ_data_id = rownames(vaf0_t)
+
+vaf0_t = cbind(germ_data_id, vaf0_t)
+vaf0.1_t = cbind(germ_data_id, vaf0.1_t)
+vaf0.2_t = cbind(germ_data_id, vaf0.2_t)
+vaf0.25_t = cbind(germ_data_id, vaf0.25_t)
+vaf0.3_t = cbind(germ_data_id, vaf0.3_t)
+vaf0.4_t = cbind(germ_data_id, vaf0.4_t)
+
+vaf0_t_tumor = merge(id_tumor, vaf0_t, by = 'germ_data_id')
+vaf0.1_t_tumor = merge(id_tumor, vaf0.1_t, by = 'germ_data_id')
+vaf0.2_t_tumor = merge(id_tumor, vaf0.2_t, by = 'germ_data_id')
+vaf0.25_t_tumor = merge(id_tumor, vaf0.25_t, by = 'germ_data_id')
+vaf0.3_t_tumor = merge(id_tumor, vaf0.3_t, by = 'germ_data_id')
+vaf0.4_t_tumor = merge(id_tumor, vaf0.4_t, by = 'germ_data_id')
 
 
-#
   
   
