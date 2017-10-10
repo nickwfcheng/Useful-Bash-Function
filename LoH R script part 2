@@ -122,7 +122,9 @@ for (i in 1:length(germ_list)){
 #Creating new column for each sample that based on presence of heterozygous germ snp and VAF threshhold (y)
 VAF.filt <- function(x,y,z) {
   tmp = x
+  
   for (i in 1:length(tmp)) {
+    tmp[[i]][is.na(tmp[[i]])] = 0
     tmp[[i]][6] = ifelse(tmp[[i]][4] == 1 & (tmp[[i]][5] >= y | tmp[[i]][5] <= z) , tmp[[i]][6] <- 1, tmp[[i]][6] <- 0)
     num = i + 3
     colnames(tmp[[i]])[6] = "V6"
@@ -133,12 +135,16 @@ VAF.filt <- function(x,y,z) {
 
 vaf0 = VAF.filt(merged, 0,100);
 vaf0.1 = VAF.filt(merged, 0.1,0.9);
+vaf0.2 = VAF.filt(merged, 0.2, 0.8);
 vaf0.25 = VAF.filt(merged, 0.25,0.75);
+vaf0.3 = VAF.filt(merged, 0.3, 0.7);
 vaf0.4 = VAF.filt(merged, 0.4,0.6);
 
 vaf0 = lapply(vaf0, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
 vaf0.1 = lapply(vaf0.1, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
+vaf0.2 = lapply(vaf0.2, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
 vaf0.25 = lapply(vaf0.25, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
+vaf0.3 = lapply(vaf0.3, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
 vaf0.4 = lapply(vaf0.4, function(z) z[(names(z) %in% c("chrom_pos","V6"))]);
 
 VAF.naming <- function(x,namesdf) {
@@ -153,24 +159,25 @@ VAF.naming <- function(x,namesdf) {
 
 vaf0 = VAF.naming(vaf0, germ_df);
 vaf0.1 = VAF.naming(vaf0.1, germ_df);
+vaf0.2 = VAF.naming(vaf0.2, germ_df);
 vaf0.25 = VAF.naming(vaf0.25, germ_df);
+vaf0.3 = VAF.naming(vaf0.3, germ_df);
 vaf0.4 = VAF.naming(vaf0.4, germ_df);
+
 
 #Remerging list of dataframes
 merge.all <- function(x, y) {
-  cbind(x, y)
+  merge(x, y, all = T, by= 'chrom_pos')
 };
 vaf0_all <- Reduce(merge.all, vaf0);
 vaf0.1_all <- Reduce(merge.all, vaf0.1);
+vaf0.2_all <- Reduce(merge.all, vaf0.2);
 vaf0.25_all <- Reduce(merge.all, vaf0.25);
+vaf0.3_all <- Reduce(merge.all, vaf0.3);
 vaf0.4_all <- Reduce(merge.all, vaf0.4);
 
-vaf0_all = vaf0_all[,-c(seq(3, ncol(vaf0_all), 2))];
-vaf0.1_all = vaf0.1_all[,-c(seq(3, ncol(vaf0.1_all), 2))];
-vaf0.25_all = vaf0.25_all[,-c(seq(3, ncol(vaf0.25_all), 2))];
-vaf0.4_all = vaf0.4_all[,-c(seq(3, ncol(vaf0.4_all), 2))];
 
-#Summarising each position
+#Summary statistics - ccount at each position per threshold
 vaf.summary <- function(x) {
   tmp = x
   tmp[is.na(tmp)] <- 0
@@ -184,5 +191,49 @@ vaf.summary <- function(x) {
 
 vaf0_summary = vaf.summary(vaf0_all);
 vaf0.1_summary = vaf.summary(vaf0.1_all);
+vaf0.2_summary = vaf.summary(vaf0.2_all);
 vaf0.25_summary = vaf.summary(vaf0.25_all);
+vaf0.3_summary = vaf.summary(vaf0.3_all);
 vaf0.4_summary = vaf.summary(vaf0.4_all)
+
+#Summary statistics - count per chromosome
+vaf_combined = merge(vaf0_summary, vaf0.1_summary, by = 'chrom_pos')
+vaf_combined = merge(vaf_combined, vaf0.2_summary, by = 'chrom_pos')
+vaf_combined = merge(vaf_combined, vaf0.25_summary, by = 'chrom_pos')
+vaf_combined = merge(vaf_combined, vaf0.3_summary, by = 'chrom_pos')
+vaf_combined = merge(vaf_combined, vaf0.4_summary, by = 'chrom_pos')
+
+colnames(vaf_combined) = c('chrom_pos', '0', '0.1','0.2','0.25','0.3','0.4')
+vaf_combined_sum = colSums(vaf_combined[,-1])
+
+#Normalising total count
+chr_length = c(248956422,242193529,198295559.00,190214555.00,181538259.00,170805979.00,159345973.00,145138636.00,138394717.00,133797422.00,135086622.00,133275309.00,114364328.00,107043718.00,101991189.00,90338345.00,83257441.00,80373285.00,58617616.00,64444167.00,46709983.00,50818468.00,156040895.00,57227415.00)
+vaf_normalised = ((vaf_combined_sum[-1]/(ncol(vaf0_all)-1))/chr_length[24])*10^6
+
+
+#Summary statistics - count vs vaf filter
+#Combined chromosome count
+
+#Summary statistics - Matching samples to tumor types
+vaf0_t = t(vaf0_all[,-1])
+colnames(vaf0_t) = vaf0_all[,1]
+
+vaf0.1_t = t(vaf0.1_all[,-1])
+colnames(vaf0.1_t) = vaf0.1_all[,1]
+
+vaf0.2_t = t(vaf0.2_all[,-1])
+colnames(vaf0.2_t) = vaf0.2_all[,1]
+
+vaf0.25_t = t(vaf0.25_all[,-1])
+colnames(vaf0.25_t) = vaf0.25_all[,1]
+
+vaf0.3_t = t(vaf0.3_all[,-1])
+colnames(vaf0.3_t) = vaf0.3_all[,1]
+
+vaf0.4_t = t(vaf0.4_all[,-1])
+colnames(vaf0.4_t) = vaf0.4_all[,1]
+
+
+#
+  
+  
