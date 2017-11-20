@@ -1,0 +1,46 @@
+##Bash - filtering liver files
+cut -f3,5,9,10,11,12,14,15,16,17,18,26  simple_somatic_mutation.open.tsv  > liver.txt
+
+##R - Single matrix mutation type vs samples
+#Importing file 
+liver_sample = read.table(file = 'liver.txt', header = T, sep = '\t')
+
+#Only keeping single base substitutions
+liver_single = liver_sample[liver_sample$mutation_type == 'single base substitution',]
+
+#Removing columns: project_code, mutation type, reference genome allele, quality score and consequence type
+liver_single = liver_single[,-c(1,6,7,8,11,12)]
+
+#Removing duplicated positions
+library(data.table)
+liver_single = unique(setDT(liver_single), by = c("icgc_sample_id" , "chromosome" , "chromosome_start", "chromosome_end"))
+
+#Summarizing snv mutation to one column
+liver_single$mutation = paste(liver_single$mutated_from_allele, liver_single$mutated_to_allele, sep=':')
+
+#Removing non-mutations (eg A -> A, T -> T)
+liver_single = liver_single[liver_single$mutation != 'A:A' & liver_single$mutation != 'T:T' & liver_single$mutation != 'C:C' & liver_single$mutation != 'G:G',]
+
+#Converting mutation column to factor
+liver_single$mutation = as.factor(liver_single$mutation)
+
+#Counting overall number of each type of mutation
+library(dplyr)
+liver_single %>% 
+  group_by(mutation) %>%
+  summarise(no_rows = length(mutation)) -> liver_total
+
+#Counting number of each type of mutation per sample
+liver_single %>% 
+  group_by(icgc_sample_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> liver_count
+
+#Normalising counts 
+sample_count = aggregate(liver_count$no_rows, by=list(liver_count$icgc_sample_id), FUN=sum)
+colnames(sample_count) = c('icgc_sample_id', 'sample_total_count')
+liver_count = merge(liver_count, sample_count, by = 'icgc_sample_id', all = T)
+liver_count$proportion = liver_count$no_rows/liver_count$sample_total_count
+
+#Plotting heatmap/matrix of mutation type vs sample
+library(ggplot2)
+liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion), color = 'white') + scale_fill_gradient2(low = 'white', high = '#39BEB1', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
