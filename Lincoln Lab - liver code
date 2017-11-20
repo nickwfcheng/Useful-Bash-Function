@@ -1,4 +1,5 @@
 ##Bash - filtering liver files
+gunzip simple_somatic_mutation.open.tsv.gz > simple_somatic_mutation.open.tsv
 cut -f3,5,9,10,11,12,14,15,16,17,18,26  simple_somatic_mutation.open.tsv  > liver.txt
 
 ##R - Single matrix mutation type vs samples
