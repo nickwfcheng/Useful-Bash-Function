@@ -45,7 +45,7 @@ liver_count$proportion = liver_count$no_rows/liver_count$sample_total_count
 
 #Plotting heatmap/matrix of mutation type vs sample
 library(ggplot2)
-liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(low = 'white', high = '#39BEB1', midpoint = 0, limits = c(0,1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
+liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
 
 #Creating di-nucleotide matrix
 source("https://bioconductor.org/biocLite.R")
@@ -71,7 +71,7 @@ colnames(sample_count_di) = c('icgc_sample_id', 'sample_total_count_di')
 liver_count_di = merge(liver_count_di, sample_count_di, by = 'icgc_sample_id', all = T)
 liver_count_di$proportion = liver_count_di$no_rows/liver_count_di$sample_total_count_di
 
-liver_count_di_plot = ggplot(liver_count_di, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = 'navy' ,high = 'red', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 70, hjust = -0.1))
+liver_count_di_plot = ggplot(liver_count_di, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 70, hjust = -0.1))
 
 #Creating tri-nucleotide matrix
 liver_triple = liver_double
@@ -88,6 +88,6 @@ colnames(sample_count_tri) = c('icgc_sample_id', 'sample_total_count_tri')
 liver_count_tri = merge(liver_count_tri, sample_count_tri, by = 'icgc_sample_id', all = T)
 liver_count_tri$proportion = liver_count_tri$no_rows/liver_count_tri$sample_total_count_tri
 
-liver_count_tri_plot = ggplot(liver_count_tri, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = 'navy' ,high = 'red', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 90, hjust = -0.1))
+liver_count_tri_plot = ggplot(liver_count_tri, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,0.1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 90, hjust = -0.1, size = 5))
 
 #pheatmap
