@@ -44,4 +44,22 @@ liver_count$proportion = liver_count$no_rows/liver_count$sample_total_count
 
 #Plotting heatmap/matrix of mutation type vs sample
 library(ggplot2)
-liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion), color = 'white') + scale_fill_gradient2(low = 'white', high = '#39BEB1', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
+liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion), color = 'white') + scale_fill_gradient2(low = 'white', high = '#39BEB1', midpoint = 0, limits = c(0,1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
+
+#Creating di-nucleotide matrix
+source("https://bioconductor.org/biocLite.R")
+biocLite("BSgenome")
+biocLite("BSgenome.Hsapiens.UCSC.hg19")
+library('BSgenome.Hsapiens.UCSC.hg19')
+
+liver_double = liver_single
+liver_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start - 1, end = liver_double$chromosome_end - 1))
+liver_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start + 1, end = liver_double$chromosome_end + 1))
+
+colnames(liver_double)[8:9] = c('flank_l', 'flank_r')
+
+liver_double$mutated_from_allele = paste(liver_double$flank_l, liver_double$mutated_from_allele, sep = '')
+liver_double$mutated_to_allele = paste(liver_double$flank_r, liver_double$mutated_to_allele, sep = '')
+
+
+
