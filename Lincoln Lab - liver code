@@ -90,4 +90,8 @@ liver_count_tri$proportion = liver_count_tri$no_rows/liver_count_tri$sample_tota
 
 liver_count_tri_plot = ggplot(liver_count_tri, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,0.1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 90, hjust = -0.1, size = 5))
 
+#Checking if reference genome matches 
+liver_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_single$chromosome, sep='')), start = liver_single$chromosome_start, end = liver_single$chromosome_end))
+liver_single$check = ifelse(liver_single$mutated_from_allele == liver_single$ref_allele,  0,  1)
+
 #pheatmap
