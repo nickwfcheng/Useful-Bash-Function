@@ -94,4 +94,7 @@ liver_count_tri_plot = ggplot(liver_count_tri, aes(x=mutation, y=icgc_sample_id)
 liver_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_single$chromosome, sep='')), start = liver_single$chromosome_start, end = liver_single$chromosome_end))
 liver_single$check = ifelse(liver_single$mutated_from_allele == liver_single$ref_allele,  0,  1)
 
+#Creating bin for every 1mil bases
+liver_single$bin <- ceiling(liver_single$chromosome_start / 999999)
+
 #pheatmap
