@@ -22,6 +22,17 @@ liver_single$mutation = paste(liver_single$mutated_from_allele, liver_single$mut
 #Removing non-mutations (eg A -> A, T -> T)
 liver_single = liver_single[liver_single$mutation != 'A:A' & liver_single$mutation != 'T:T' & liver_single$mutation != 'C:C' & liver_single$mutation != 'G:G',]
 
+#Grouping mutations
+liver_single$mutation1 = liver_single$mutation
+liver_single$mutation1 = as.character(liver_single$mutation1)
+liver_single$mutation1 = gsub("G:A", "C:T", liver_single$mutation1)
+liver_single$mutation1 = gsub("G:T", "C:A", liver_single$mutation1)
+liver_single$mutation1 = gsub("G:C", "C:G", liver_single$mutation1)
+liver_single$mutation1 = gsub("T:A", "A:T", liver_single$mutation1)
+liver_single$mutation1 = gsub("T:C", "A:G", liver_single$mutation1)
+liver_single$mutation1 = gsub("T:G", "A:C", liver_single$mutation1)
+liver_single$mutation1 = as.character(as.factor(liver_single$mutation1))
+
 #Converting mutation column to factor
 liver_single$mutation = as.factor(liver_single$mutation)
 
@@ -47,7 +58,7 @@ liver_count$proportion = liver_count$no_rows/liver_count$sample_total_count
 library(ggplot2)
 liver_count_plot = ggplot(liver_count, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,1)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank())
 
-#Creating di-nucleotide matrix
+#Creating di-nucleotide matrix (left)
 source("https://bioconductor.org/biocLite.R")
 biocLite("BSgenome")
 biocLite("BSgenome.Hsapiens.UCSC.hg19")
@@ -56,6 +67,8 @@ library('BSgenome.Hsapiens.UCSC.hg19')
 liver_double = liver_single
 liver_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start - 1, end = liver_double$chromosome_end - 1))
 liver_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start + 1, end = liver_double$chromosome_end + 1))
+
+liver_double1 = liver_double
 
 liver_double$mutated_from_allele = paste(liver_double$'flank(left)', liver_double$mutated_from_allele, sep='')
 liver_double$mutated_to_allele = paste(liver_double$'flank(left)', liver_double$mutated_to_allele, sep='')
@@ -72,6 +85,22 @@ liver_count_di = merge(liver_count_di, sample_count_di, by = 'icgc_sample_id', a
 liver_count_di$proportion = liver_count_di$no_rows/liver_count_di$sample_total_count_di
 
 liver_count_di_plot = ggplot(liver_count_di, aes(x=mutation, y=icgc_sample_id)) + geom_tile(aes(fill = proportion)) + scale_fill_gradient2(mid = '#ffeda0' ,high = '#f03b20', midpoint = 0, limits = c(0,0.5)) + ylab('sample') + xlab('mutation') + scale_x_discrete(position = 'top') + theme(axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.text.x = element_text(angle = 70, hjust = -0.1))
+
+#Creating di-nucleotide matrix (right)
+liver_double1$mutated_from_allele = paste(liver_double1$mutated_from_allele, liver_double1$'flank(right)', sep='')
+liver_double1$mutated_to_allele = paste(liver_double1$mutated_to_allele, liver_double1$'flank(right)', sep='')
+
+liver_double1$mutation = paste(liver_double1$mutated_from_allele, liver_double1$mutated_to_allele, sep=':')
+
+liver_double1 %>% 
+  group_by(icgc_sample_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> liver_count_di1
+
+sample_count_di1 = aggregate(liver_count_di1$no_rows, by=list(liver_count_di1$icgc_sample_id), FUN=sum)
+colnames(sample_count_di1) = c('icgc_sample_id', 'sample_total_count_di')
+liver_count_di1 = merge(liver_count_di1, sample_count_di1, by = 'icgc_sample_id', all = T)
+liver_count_di1$proportion = liver_count_di1$no_rows/liver_count_di1$sample_total_count_di
+
 
 #Creating tri-nucleotide matrix
 liver_triple = liver_double
@@ -97,4 +126,39 @@ liver_single$check = ifelse(liver_single$mutated_from_allele == liver_single$ref
 #Creating bin for every 1mil bases
 liver_single$bin <- ceiling(liver_single$chromosome_start / 999999)
 
+#Summarising count in header
+library(reshape2)
+liver_mono = dcast(liver_count, icgc_sample_id ~ mutation)
+liver_di = dcast(liver_count_di, icgc_sample_id ~ mutation)
+liver_di1 = dcast(liver_count_di1, icgc_sample_id ~ mutation)
+liver_tri = dcast(liver_count_tri, icgc_sample_id ~ mutation)
+
+#Converting NA to 0
+liver_mono[is.na(liver_mono)] = 0 
+liver_di[is.na(liver_di)] = 0 
+liver_di1[is.na(liver_di1)] = 0 
+liver_tri[is.na(liver_tri)] = 0 
+
+#Combining similar nucleotides
+n.combine <- function(x) {
+  tmp = x
+  mid = ceiling(ncol(tmp)/2)
+  for (i in 0:(mid-2)) {
+    num = i + 1
+    tmp[, (mid - i)] = tmp[,(mid - i)] + tmp[,(mid + num)]
+  }
+  return(tmp[,1:(ceiling(ncol(tmp)/2))])
+}
+
+liver_mono_sum = n.combine(liver_mono)
+liver_di_sum = n.combine(liver_di)
+liver_di1_sum = n.combine(liver_di1)
+liver_tri_sum = n.combine(liver_tri)
+
+liver_combined = merge(liver_mono_sum, liver_di_sum, by = 'icgc_sample_id', all = T)
+liver_combined = merge(liver_combined, liver_di1_sum, by = 'icgc_sample_id', all = T)
+liver_combined = merge(liver_combined, liver_tri_sum, by = 'icgc_sample_id', all = T)
+
+#Converting NAs to 0
+liver_combined[is.na(liver_combined)] = 0
 #pheatmap
