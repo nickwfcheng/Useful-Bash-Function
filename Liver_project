@@ -1,0 +1,253 @@
+liver1 = readRDS('liver1.RDS')
+tmp = unique(setDT(liver_count), by = 'icgc_sample_id')
+liver1.summary = merge(liver1, tmp[,c(1,4)])
+
+liver_count1 = merge(liver1, liver_count, by = 'icgc_sample_id')
+liver_count_di1 = merge(liver1, liver_count_di, by = 'icgc_sample_id')
+liver_count_tri1 = merge(liver1, liver_count_tri, by = 'icgc_sample_id')
+
+liver_LIAD_FR = list()
+liver_LICA_CN = list()
+liver_LICA_FR = list()
+liver_LIHC_US = list()
+liver_LIHM_FR = list()
+liver_LINC_JP = list()
+liver_LIRI_JP = list()
+
+library(reshape2)
+liver_LIAD_FR[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LIAD-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_CN[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LICA-CN'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_FR[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LICA-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHC_US[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LIHC-US'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHM_FR[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LIHM-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LINC_JP[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LINC-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIRI_JP[[1]] = dcast(liver_count1[which(liver_count1$project_code == 'LIRI-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+
+liver_LIAD_FR[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LIAD-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_CN[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LICA-CN'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_FR[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LICA-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHC_US[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LIHC-US'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHM_FR[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LIHM-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LINC_JP[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LINC-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIRI_JP[[2]] = dcast(liver_count_di1[which(liver_count_di1$project_code == 'LIRI-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+
+liver_LIAD_FR[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LIAD-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_CN[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LICA-CN'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LICA_FR[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LICA-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHC_US[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LIHC-US'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIHM_FR[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LIHM-FR'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LINC_JP[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LINC-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+liver_LIRI_JP[[3]] = dcast(liver_count_tri1[which(liver_count_tri1$project_code == 'LIRI-JP'),], icgc_sample_id ~ mutation, value.var = 'proportion')
+
+liver_LIAD_FR = lapply(liver_LIAD_FR,function(x) replace(x,is.na(x),0))
+liver_LICA_CN = lapply(liver_LICA_CN,function(x) replace(x,is.na(x),0))
+liver_LICA_FR = lapply(liver_LICA_FR,function(x) replace(x,is.na(x),0))
+liver_LIHC_US = lapply(liver_LIHC_US,function(x) replace(x,is.na(x),0))
+liver_LIHM_FR = lapply(liver_LIHM_FR,function(x) replace(x,is.na(x),0))
+liver_LINC_JP = lapply(liver_LINC_JP,function(x) replace(x,is.na(x),0))
+liver_LIRI_JP = lapply(liver_LIRI_JP,function(x) replace(x,is.na(x),0))
+
+n.combine <- function(x) {
+  tmp = x
+  mid = ceiling(ncol(tmp)/2)
+  for (i in 0:(mid-2)) {
+    num = i + 1
+    tmp[, (mid - i)] = tmp[,(mid - i)] + tmp[,(mid + num)]
+  }
+  return(tmp[,1:(ceiling(ncol(tmp)/2))])
+}
+
+liver_LIAD_FR[[1]] = n.combine(liver_LIAD_FR[[1]])
+liver_LICA_CN[[1]] = n.combine(liver_LICA_CN[[1]])
+liver_LICA_FR[[1]] = n.combine(liver_LICA_FR[[1]])
+liver_LIHC_US[[1]] = n.combine(liver_LIHC_US[[1]])
+liver_LIHM_FR[[1]] = n.combine(liver_LIHM_FR[[1]])
+liver_LINC_JP[[1]] = n.combine(liver_LINC_JP[[1]])
+liver_LIRI_JP[[1]] = n.combine(liver_LIRI_JP[[1]])
+
+n.combine2 <- function(x) {
+  tmp = x
+  mid = ceiling(ncol(tmp)/2)
+  for (i in 0:(mid-2)) {
+    num = i + 1
+    tmp[, (mid - i)] = tmp[,(mid - i)] + tmp[,(mid + num)]
+    tmp[, (mid + num)] = tmp[,(mid - i)]
+  }
+  tmp1 = tmp[,c(1,2:13, 17:19, 23:38, 42:44, 48:49, 52:54, 58:60, 77:79, 83:85)]
+}
+liver_LIAD_FR[[2]] = n.combine2(liver_LIAD_FR[[2]])
+liver_LICA_CN[[2]] = n.combine2(liver_LICA_CN[[2]])
+liver_LICA_FR[[2]] = n.combine2(liver_LICA_FR[[2]])
+liver_LIHC_US[[2]] = n.combine2(liver_LIHC_US[[2]])
+liver_LIHM_FR[[2]] = n.combine2(liver_LIHM_FR[[2]])
+liver_LINC_JP[[2]] = n.combine2(liver_LINC_JP[[2]])
+liver_LIRI_JP[[2]] = n.combine2(liver_LIRI_JP[[2]])
+
+n.combine3 <- function(x) {
+  tmp = x
+  mid = ceiling(ncol(tmp)/2)
+  for (i in 0:(mid-2)) {
+    num = i + 1
+    tmp[, (mid - i)] = tmp[,(mid - i)] + tmp[,(mid + num)]
+    tmp[, (mid + num)] = tmp[,(mid - i)]
+  }
+  tmp1 = tmp[,c(1, 2:25, 50:73, 98:121, 146:169)]
+}
+liver_LIAD_FR[[3]] = n.combine3(liver_LIAD_FR[[3]])
+liver_LICA_CN[[3]] = n.combine3(liver_LICA_CN[[3]])
+liver_LICA_FR[[3]] = n.combine3(liver_LICA_FR[[3]])
+liver_LIHC_US[[3]] = n.combine3(liver_LIHC_US[[3]])
+liver_LIHM_FR[[3]] = n.combine3(liver_LIHM_FR[[3]])
+liver_LINC_JP[[3]] = n.combine3(liver_LINC_JP[[3]])
+liver_LIRI_JP[[3]] = n.combine3(liver_LIRI_JP[[3]])
+
+liver_LIAD_FR = lapply(liver_LIAD_FR,function(x) replace(x,is.na(x),0))
+liver_LICA_CN = lapply(liver_LICA_CN,function(x) replace(x,is.na(x),0))
+liver_LICA_FR = lapply(liver_LICA_FR,function(x) replace(x,is.na(x),0))
+liver_LIHC_US = lapply(liver_LIHC_US,function(x) replace(x,is.na(x),0))
+liver_LIHM_FR = lapply(liver_LIHM_FR,function(x) replace(x,is.na(x),0))
+liver_LINC_JP = lapply(liver_LINC_JP,function(x) replace(x,is.na(x),0))
+liver_LIRI_JP = lapply(liver_LIRI_JP,function(x) replace(x,is.na(x),0))
+#Drawing heatmaps
+library(pheatmap)
+liver_LIAD_FR_snv = pheatmap(liver_LIAD_FR[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_CN_snv = pheatmap(liver_LICA_CN[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_FR_snv = pheatmap(liver_LICA_FR[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHC_US_snv = pheatmap(liver_LIHC_US[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHM_FR_snv = pheatmap(liver_LIHM_FR[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LINC_JP_snv = pheatmap(liver_LINC_JP[[1]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIRI_JP_snv = pheatmap(liver_LIRI_JP[[1]][,-1], cluster_rows = F, cluster_cols = F)
+
+liver_LIAD_FR_dnv = pheatmap(liver_LIAD_FR[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_CN_dnv = pheatmap(liver_LICA_CN[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_FR_dnv = pheatmap(liver_LICA_FR[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHC_US_dnv = pheatmap(liver_LIHC_US[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHM_FR_dnv = pheatmap(liver_LIHM_FR[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LINC_JP_dnv = pheatmap(liver_LINC_JP[[2]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIRI_JP_dnv = pheatmap(liver_LIRI_JP[[2]][,-1], cluster_rows = F, cluster_cols = F)
+
+liver_LIAD_FR_tnv = pheatmap(liver_LIAD_FR[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_CN_tnv = pheatmap(liver_LICA_CN[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LICA_FR_tnv = pheatmap(liver_LICA_FR[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHC_US_tnv = pheatmap(liver_LIHC_US[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIHM_FR_tnv = pheatmap(liver_LIHM_FR[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LINC_JP_tnv = pheatmap(liver_LINC_JP[[3]][,-1], cluster_rows = F, cluster_cols = F)
+liver_LIRI_JP_tnv = pheatmap(liver_LIRI_JP[[3]][,-1], cluster_rows = F, cluster_cols = F)
+
+#Applying mlr
+#Combining all nucleotide mutations
+merge.all <- function(x, y) {
+  merge(x, y, all=TRUE, by=c('icgc_sample_id'))
+}
+LIAD_FR = Reduce(merge.all, liver_LIAD_FR)
+LICA_CN = Reduce(merge.all, liver_LICA_CN)
+LICA_FR = Reduce(merge.all, liver_LICA_FR)
+LIHC_US = Reduce(merge.all, liver_LIHC_US)
+LIHM_FR = Reduce(merge.all, liver_LIHM_FR)
+LINC_JP = Reduce(merge.all, liver_LINC_JP)
+LIRI_JP = Reduce(merge.all, liver_LIRI_JP)
+
+#changing column names to match learner
+colnames(LIAD_FR) = gsub(':', '..', colnames(LIAD_FR))
+colnames(LICA_CN) = gsub(':', '..', colnames(LICA_CN))
+colnames(LICA_FR) = gsub(':', '..', colnames(LICA_FR))
+colnames(LIHC_US) = gsub(':', '..', colnames(LIHC_US))
+colnames(LIHM_FR)  = gsub(':', '..', colnames(LIHM_FR))
+colnames(LINC_JP) = gsub(':', '..', colnames(LINC_JP))
+colnames(LIRI_JP) = gsub(':', '..', colnames(LIRI_JP))
+
+#Normalising data with mean and sd
+LIAD_FR_wgs = (LIAD_FR[,-1] - mean.mut.wgs)/sd.mut.wgs
+LICA_CN_wgs = (LICA_CN[,-1] - mean.mut.wgs)/sd.mut.wgs
+LICA_FR_wgs = (LICA_FR[,-1] - mean.mut.wgs)/sd.mut.wgs
+LIHC_US_wgs = (LIHC_US[,-1] - mean.mut.wgs)/sd.mut.wgs
+LIHM_FR_wgs = (LIHM_FR[,-1] - mean.mut.wgs)/sd.mut.wgs
+LINC_JP_wgs = (LINC_JP[,-1] - mean.mut.wgs)/sd.mut.wgs
+LIRI_JP_wgs = (LIRI_JP[,-1] - mean.mut.wgs)/sd.mut.wgs
+
+LIAD_FR_exo = (LIAD_FR[,-1] - mean.mut.exo)/sd.mut.exo
+LICA_CN_exo = (LICA_CN[,-1] - mean.mut.exo)/sd.mut.exo
+LICA_FR_exo = (LICA_FR[,-1] - mean.mut.exo)/sd.mut.exo
+LIHC_US_exo = (LIHC_US[,-1] - mean.mut.exo)/sd.mut.exo
+LIHM_FR_exo = (LIHM_FR[,-1] - mean.mut.exo)/sd.mut.exo
+LINC_JP_exo = (LINC_JP[,-1] - mean.mut.exo)/sd.mut.exo
+LIRI_JP_exo = (LIRI_JP[,-1] - mean.mut.exo)/sd.mut.exo
+
+
+#Using learner model to predict tumor types
+library(mlr)
+library(randomForest)
+pred.test <- function(x,y) {
+  tmp = list()
+  for (i in 1:4) {
+    tmp[[i]] = summary(predict(x[[i]]$learner.model, newdata = y))
+  }
+  return(tmp)
+}
+pred.test.LIAD_FR.wgs = pred.test(mut.wgs.mod.list, LIAD_FR_wgs)
+pred.test.LICA_CN.wgs = pred.test(mut.wgs.mod.list, LICA_CN_wgs)
+pred.test.LICA_FR.wgs = pred.test(mut.wgs.mod.list, LICA_FR_wgs)
+pred.test.LIHC_US.wgs = pred.test(mut.wgs.mod.list, LIHC_US_wgs)
+pred.test.LIHM_FR.wgs = pred.test(mut.wgs.mod.list, LIHM_FR_wgs)
+pred.test.LINC_JP.wgs = pred.test(mut.wgs.mod.list, LINC_JP_wgs)
+pred.test.LIRI_JP.wgs = pred.test(mut.wgs.mod.list, LIRI_JP_wgs)
+
+pred.test.LIAD_FR.exo = pred.test(mut.exo.mod.list, LIAD_FR_exo)
+pred.test.LICA_CN.exo = pred.test(mut.exo.mod.list, LICA_CN_exo)
+pred.test.LICA_FR.exo = pred.test(mut.exo.mod.list, LICA_FR_exo)
+pred.test.LIHC_US.exo = pred.test(mut.exo.mod.list, LIHC_US_exo)
+pred.test.LIHM_FR.exo = pred.test(mut.exo.mod.list, LIHM_FR_exo)
+pred.test.LINC_JP.exo = pred.test(mut.exo.mod.list, LINC_JP_exo)
+pred.test.LIRI_JP.exo = pred.test(mut.exo.mod.list, LIRI_JP_exo)
+
+#Tabulating results
+pred.test.LIAD_FR.wgs = do.call("rbind", pred.test.LIAD_FR.wgs)
+pred.test.LICA_CN.wgs = do.call("rbind", pred.test.LICA_CN.wgs)
+pred.test.LICA_FR.wgs = do.call("rbind", pred.test.LICA_FR.wgs)
+pred.test.LIHC_US.wgs = do.call("rbind", pred.test.LIHC_US.wgs)
+pred.test.LIHM_FR.wgs = do.call("rbind", pred.test.LIHM_FR.wgs)
+pred.test.LINC_JP.wgs = do.call("rbind", pred.test.LINC_JP.wgs)
+pred.test.LIRI_JP.wgs = do.call("rbind", pred.test.LIRI_JP.wgs)
+
+pred.test.LIAD_FR.exo = do.call("rbind", pred.test.LIAD_FR.exo)
+pred.test.LICA_CN.exo = do.call("rbind", pred.test.LICA_CN.exo)
+pred.test.LICA_FR.exo = do.call("rbind", pred.test.LICA_FR.exo)
+pred.test.LIHC_US.exo = do.call("rbind", pred.test.LIHC_US.exo)
+pred.test.LIHM_FR.exo = do.call("rbind", pred.test.LIHM_FR.exo)
+pred.test.LINC_JP.exo = do.call("rbind", pred.test.LINC_JP.exo)
+pred.test.LIRI_JP.exo = do.call("rbind", pred.test.LIRI_JP.exo)
+
+#Combining both results
+LIAD_FR_results = rbind(pred.test.LIAD_FR.wgs, pred.test.LIAD_FR.exo)
+LICA_CN_results = rbind(pred.test.LICA_CN.wgs, pred.test.LICA_CN.exo)
+LICA_FR_results = rbind(pred.test.LICA_FR.wgs, pred.test.LICA_FR.exo)
+LIHC_US_results = rbind(pred.test.LIHC_US.wgs, pred.test.LIHC_US.exo)
+LIHM_FR_results = rbind(pred.test.LIHM_FR.wgs, pred.test.LIHM_FR.exo)
+LINC_JP_results = rbind(pred.test.LINC_JP.wgs, pred.test.LINC_JP.exo)
+LIRI_JP_results = rbind(pred.test.LIRI_JP.wgs, pred.test.LIRI_JP.exo)
+
+#Labelling classifier
+liver.class <- function(x) { 
+  tmp = x
+  tmp$classifier = 'x'
+  tmp[1:4,3] = 'wgs'
+  tmp[5:8,3] = 'exo'
+  return(tmp)
+}
+LIAD_FR_results = rbind(LIAD_FR_results)
+LICA_CN_results = rbind(LICA_CN_results)
+LICA_FR_results = rbind(LICA_FR_results)
+LIHC_US_results = rbind(LIHC_US_results)
+LIHM_FR_results = rbind(LIHM_FR_results)
+LINC_JP_results = rbind(LINC_JP_results)
+LIRI_JP_results = rbind(LIRI_JP_results)
+
+#save RDS
+saveRDS(LIAD_FR_results, 'LIAD_FR_results')
+saveRDS(LICA_CN_results, 'LICA_CN_results')
+saveRDS(LICA_FR_results, 'LICA_FR_results')
+saveRDS(LIHC_US_results, 'LIHC_US_results')
+saveRDS(LIHM_FR_results, 'LIHM_FR_results')
+saveRDS(LINC_JP_results, 'LINC_JP_results')
+saveRDS(LIRI_JP_results, 'LIRI_JP_results ')
+
