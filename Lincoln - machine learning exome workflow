@@ -122,7 +122,7 @@ n.combine2 <- function(x) {
   tmp1 = tmp[,c(1,2:13, 17:19, 23:38, 42:44, 48:49, 52:54, 58:60, 77:79, 83:85)]
   return(tmp1)
 }
-COAD_US_matrix[[2]] = n.combine(COAD_US_list[[2]])
+COAD_US_matrix[[2]] = n.combine2(COAD_US_list[[2]])
 
 n.combine3 <- function(x) {
   tmp = x
@@ -136,7 +136,7 @@ n.combine3 <- function(x) {
   tmp1 = tmp[,c(1, 2:25, 50:73, 98:121, 146:169)]
   return(tmp1)
 }
-COAD_US_matrix[[3]] = n.combine(COAD_US_list[[3]])
+COAD_US_matrix[[3]] = n.combine3(COAD_US_list[[3]])
 
 COAD_US_matrix = lapply(COAD_US_matrix ,function(x) replace(x,is.na(x),0))
 
