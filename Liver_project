@@ -177,74 +177,6 @@ LIRI_JP_exo = (LIRI_JP[,-1] - mean.mut.exo)/sd.mut.exo
 #Using learner model to predict tumor types
 library(mlr)
 library(randomForest)
-pred.test <- function(x,y) {
-  tmp = list()
-  for (i in 1:4) {
-    tmp[[i]] = summary(predict(x[[i]]$learner.model, newdata = y))
-  }
-  return(tmp)
-}
-pred.test.LIAD_FR.wgs = pred.test(mut.wgs.mod.list, LIAD_FR_wgs)
-pred.test.LICA_CN.wgs = pred.test(mut.wgs.mod.list, LICA_CN_wgs)
-pred.test.LICA_FR.wgs = pred.test(mut.wgs.mod.list, LICA_FR_wgs)
-pred.test.LIHC_US.wgs = pred.test(mut.wgs.mod.list, LIHC_US_wgs)
-pred.test.LIHM_FR.wgs = pred.test(mut.wgs.mod.list, LIHM_FR_wgs)
-pred.test.LINC_JP.wgs = pred.test(mut.wgs.mod.list, LINC_JP_wgs)
-pred.test.LIRI_JP.wgs = pred.test(mut.wgs.mod.list, LIRI_JP_wgs)
-
-pred.test.LIAD_FR.exo = pred.test(mut.exo.mod.list, LIAD_FR_exo)
-pred.test.LICA_CN.exo = pred.test(mut.exo.mod.list, LICA_CN_exo)
-pred.test.LICA_FR.exo = pred.test(mut.exo.mod.list, LICA_FR_exo)
-pred.test.LIHC_US.exo = pred.test(mut.exo.mod.list, LIHC_US_exo)
-pred.test.LIHM_FR.exo = pred.test(mut.exo.mod.list, LIHM_FR_exo)
-pred.test.LINC_JP.exo = pred.test(mut.exo.mod.list, LINC_JP_exo)
-pred.test.LIRI_JP.exo = pred.test(mut.exo.mod.list, LIRI_JP_exo)
-
-#Tabulating results
-pred.test.LIAD_FR.wgs = do.call("rbind", pred.test.LIAD_FR.wgs)
-pred.test.LICA_CN.wgs = do.call("rbind", pred.test.LICA_CN.wgs)
-pred.test.LICA_FR.wgs = do.call("rbind", pred.test.LICA_FR.wgs)
-pred.test.LIHC_US.wgs = do.call("rbind", pred.test.LIHC_US.wgs)
-pred.test.LIHM_FR.wgs = do.call("rbind", pred.test.LIHM_FR.wgs)
-pred.test.LINC_JP.wgs = do.call("rbind", pred.test.LINC_JP.wgs)
-pred.test.LIRI_JP.wgs = do.call("rbind", pred.test.LIRI_JP.wgs)
-
-pred.test.LIAD_FR.exo = do.call("rbind", pred.test.LIAD_FR.exo)
-pred.test.LICA_CN.exo = do.call("rbind", pred.test.LICA_CN.exo)
-pred.test.LICA_FR.exo = do.call("rbind", pred.test.LICA_FR.exo)
-pred.test.LIHC_US.exo = do.call("rbind", pred.test.LIHC_US.exo)
-pred.test.LIHM_FR.exo = do.call("rbind", pred.test.LIHM_FR.exo)
-pred.test.LINC_JP.exo = do.call("rbind", pred.test.LINC_JP.exo)
-pred.test.LIRI_JP.exo = do.call("rbind", pred.test.LIRI_JP.exo)
-
-#Combining both results
-LIAD_FR_results = rbind(pred.test.LIAD_FR.wgs, pred.test.LIAD_FR.exo)
-LICA_CN_results = rbind(pred.test.LICA_CN.wgs, pred.test.LICA_CN.exo)
-LICA_FR_results = rbind(pred.test.LICA_FR.wgs, pred.test.LICA_FR.exo)
-LIHC_US_results = rbind(pred.test.LIHC_US.wgs, pred.test.LIHC_US.exo)
-LIHM_FR_results = rbind(pred.test.LIHM_FR.wgs, pred.test.LIHM_FR.exo)
-LINC_JP_results = rbind(pred.test.LINC_JP.wgs, pred.test.LINC_JP.exo)
-LIRI_JP_results = rbind(pred.test.LIRI_JP.wgs, pred.test.LIRI_JP.exo)
-
-#Labelling classifier
-liver.class <- function(x) { 
-  tmp = x
-  tmp1 = c('wgs1', 'wgs2', 'wgs3', 'wgs4', 'exo1', 'exo2', 'exo3', 'exo4')
-  tmp = cbind(as.data.frame(tmp1), tmp)
-  colnames(tmp)[1] = 'model'
-  tmp2 = 'Liver-HCC'
-  tmp[,4] = tmp2
-  colnames(tmp)[4] = 'data_set'
-  return(tmp)
-}
-LICA_CN_results = liver.class(LICA_CN_results)
-LICA_FR_results = liver.class(LICA_FR_results)
-LIHC_US_results = liver.class(LIHC_US_results)
-LINC_JP_results = liver.class(LINC_JP_results)
-LIRI_JP_results = liver.class(LIRI_JP_results)
-
-#pred2
-
 pred.test <- function(x, y, z, donor) {
   tmp = list()
   for (i in 1:4) {
@@ -259,6 +191,22 @@ pred.test <- function(x, y, z, donor) {
   }
   return(tmp)
 }
+pred.test.LIAD_FR.wgs = pred.test(mut.wgs.mod.list, LIAD_FR_wgs, 'Liver-HCC', liver_LIAD_FR[[1]][,1])
+pred.test.LICA_CN.wgs = pred.test(mut.wgs.mod.list, LICA_CN_wgs, 'Liver-HCC', liver_LICA_CN[[1]][,1])
+pred.test.LICA_FR.wgs = pred.test(mut.wgs.mod.list, LICA_FR_wgs, 'Liver-HCC', liver_LICA_FR[[1]][,1])
+pred.test.LIHC_US.wgs = pred.test(mut.wgs.mod.list, LIHC_US_wgs, 'Liver-HCC', liver_LIHC_US[[1]][,1])
+pred.test.LIHM_FR.wgs = pred.test(mut.wgs.mod.list, LIHM_FR_wgs, 'Liver-HCC', liver_LIHM_FR[[1]][,1])
+pred.test.LINC_JP.wgs = pred.test(mut.wgs.mod.list, LINC_JP_wgs, 'Liver-HCC', liver_LINC_JP[[1]][,1])
+pred.test.LIRI_JP.wgs = pred.test(mut.wgs.mod.list, LIRI_JP_wgs, 'Liver-HCC', liver_LIRI_JP[[1]][,1])
+
+pred.test.LIAD_FR.exo = pred.test(mut.exo.mod.list, LIAD_FR_exo, 'Liver-HCC', liver_LIAD_FR[[1]][,1])
+pred.test.LICA_CN.exo = pred.test(mut.exo.mod.list, LICA_CN_exo, 'Liver-HCC', liver_LICA_CN[[1]][,1])
+pred.test.LICA_FR.exo = pred.test(mut.exo.mod.list, LICA_FR_exo, 'Liver-HCC', liver_LICA_FR[[1]][,1])
+pred.test.LIHC_US.exo = pred.test(mut.exo.mod.list, LIHC_US_exo, 'Liver-HCC', liver_LIHC_US[[1]][,1])
+pred.test.LIHM_FR.exo = pred.test(mut.exo.mod.list, LIHM_FR_exo, 'Liver-HCC', liver_LIHM_FR[[1]][,1])
+pred.test.LINC_JP.exo = pred.test(mut.exo.mod.list, LINC_JP_exo, 'Liver-HCC', liver_LINC_JP[[1]][,1])
+pred.test.LIRI_JP.exo = pred.test(mut.exo.mod.list, LIRI_JP_exo, 'Liver-HCC', liver_LIRI_JP[[1]][,1])
+
 
 #save RDS
 saveRDS(LICA_CN_results, 'LICA_CN_results')
