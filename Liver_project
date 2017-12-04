@@ -245,13 +245,17 @@ LIRI_JP_results = liver.class(LIRI_JP_results)
 
 #pred2
 
-pred.test <- function(x,y) {
+pred.test <- function(x, y, z, donor) {
   tmp = list()
   for (i in 1:4) {
     tmp[[i]] = as.data.frame(predict(x[[i]]$learner.model, newdata = y))
     tmp1 = predict(x[[i]]$learner.model, newdata = y, type = "prob")
-    tmp[[i]] = cbind(tmp[[i]], tmp1)
-    colnames(tmp[[i]])[1] = 'pred.class'
+    tmp2 = z
+    tmp[[i]] = cbind(tmp1, tmp[[i]])
+    colnames(tmp[[i]])[3] = 'pred.class'
+    tmp[[i]][4] = z
+    colnames(tmp[[i]])[4] = 'class'
+    tmp[[i]] = cbind(donor, tmp[[i]])
   }
   return(tmp)
 }
