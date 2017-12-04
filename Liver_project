@@ -243,6 +243,19 @@ LIHC_US_results = liver.class(LIHC_US_results)
 LINC_JP_results = liver.class(LINC_JP_results)
 LIRI_JP_results = liver.class(LIRI_JP_results)
 
+#pred2
+
+pred.test <- function(x,y) {
+  tmp = list()
+  for (i in 1:4) {
+    tmp[[i]] = as.data.frame(predict(x[[i]]$learner.model, newdata = y))
+    tmp1 = predict(x[[i]]$learner.model, newdata = y, type = "prob")
+    tmp[[i]] = cbind(tmp[[i]], tmp1)
+    colnames(tmp[[i]])[1] = 'pred.class'
+  }
+  return(tmp)
+}
+
 #save RDS
 saveRDS(LICA_CN_results, 'LICA_CN_results')
 saveRDS(LICA_FR_results, 'LICA_FR_results')
