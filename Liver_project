@@ -229,25 +229,24 @@ LIRI_JP_results = rbind(pred.test.LIRI_JP.wgs, pred.test.LIRI_JP.exo)
 #Labelling classifier
 liver.class <- function(x) { 
   tmp = x
-  tmp$classifier = 'x'
-  tmp[1:4,3] = 'wgs'
-  tmp[5:8,3] = 'exo'
+  tmp1 = c('wgs1', 'wgs2', 'wgs3', 'wgs4', 'exo1', 'exo2', 'exo3', 'exo4')
+  tmp = cbind(as.data.frame(tmp1), tmp)
+  colnames(tmp)[1] = 'model'
+  tmp2 = 'Liver-HCC'
+  tmp[,4] = tmp2
+  colnames(tmp)[4] = 'data_set'
   return(tmp)
 }
-LIAD_FR_results = rbind(LIAD_FR_results)
-LICA_CN_results = rbind(LICA_CN_results)
-LICA_FR_results = rbind(LICA_FR_results)
-LIHC_US_results = rbind(LIHC_US_results)
-LIHM_FR_results = rbind(LIHM_FR_results)
-LINC_JP_results = rbind(LINC_JP_results)
-LIRI_JP_results = rbind(LIRI_JP_results)
+LICA_CN_results = liver.class(LICA_CN_results)
+LICA_FR_results = liver.class(LICA_FR_results)
+LIHC_US_results = liver.class(LIHC_US_results)
+LINC_JP_results = liver.class(LINC_JP_results)
+LIRI_JP_results = liver.class(LIRI_JP_results)
 
 #save RDS
-saveRDS(LIAD_FR_results, 'LIAD_FR_results')
 saveRDS(LICA_CN_results, 'LICA_CN_results')
 saveRDS(LICA_FR_results, 'LICA_FR_results')
 saveRDS(LIHC_US_results, 'LIHC_US_results')
-saveRDS(LIHM_FR_results, 'LIHM_FR_results')
 saveRDS(LINC_JP_results, 'LINC_JP_results')
-saveRDS(LIRI_JP_results, 'LIRI_JP_results ')
+saveRDS(LIRI_JP_results, 'LIRI_JP_results')
 
