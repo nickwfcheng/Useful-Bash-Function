@@ -12,11 +12,11 @@ project.combine <- function(x) {
   for (i in 1:4) {
     tmp1[[i]] = tmp[[1]][[i]]
     for (j in 2:length(tmp)){
-        tmp1[[i]] = rbind(tmp1[[i]], tmp[[j]][[i]])
+      tmp1[[i]] = rbind(tmp1[[i]], tmp[[j]][[i]])
     }
   }
   return(tmp1)
-  }
+}
 
 
 exo_pos_list = project.combine(exo_pos)
@@ -42,7 +42,7 @@ wgs_list = reorder.class(wgs_list)
 
 #Generating RoC curves
 library(caTools)
-source("C:/Users/Nick Cheng/Desktop/Lincoln Lab/All/colAUC_PR.R")
+source("/home/ncheng/Desktop/Lincoln/All/colAUC_PR.R")
 colAUC(wgs_list[[1]][,2], wgs_list[[1]][,5], plotROC=T)
 colAUC_PR(wgs_list[[1]][,2], wgs_list[[1]][,5], plotROC=T)
 
@@ -67,3 +67,18 @@ colAUC_PR(exo_list[[3]][,2], exo_list[[3]][,5], plotROC=T)
 
 colAUC(exo_list[[4]][,2], exo_list[[4]][,5], plotROC=T)
 colAUC_PR(exo_list[[4]][,2], exo_list[[4]][,5], plotROC=T)
+
+#Finding best cutoffs
+library(OptimalCutpoints)
+wgs_cutoff = list()
+wgs_cutoff[[1]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = wgs_list[[1]], method = "MaxProdSpSe")
+wgs_cutoff[[2]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = wgs_list[[2]], method = "MaxProdSpSe")
+wgs_cutoff[[3]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = wgs_list[[3]], method = "MaxProdSpSe")
+wgs_cutoff[[4]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = wgs_list[[4]], method = "MaxProdSpSe")
+
+exo_cutoff = list()
+exo_cutoff[[1]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[1]], method = "MaxProdSpSe")
+exo_cutoff[[2]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[2]], method = "MaxProdSpSe")
+exo_cutoff[[3]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[3]], method = "MaxProdSpSe")
+exo_cutoff[[4]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[4]], method = "MaxProdSpSe")
+
