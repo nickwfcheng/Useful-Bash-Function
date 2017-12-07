@@ -1,0 +1,69 @@
+#Importing files 
+exo_pos = lapply(list.files(pattern = "*\\.exo.RDS"), readRDS)
+exo_neg = lapply(list.files(pattern = "*_exo.RDS"), readRDS)
+
+wgs_pos = lapply(list.files(pattern = "*\\.wgs.RDS"), readRDS)
+wgs_neg = lapply(list.files(pattern = "*_wgs.RDS"), readRDS)
+
+#Combining
+project.combine <- function(x) {
+  tmp = x
+  tmp1 = list()
+  for (i in 1:4) {
+    tmp1[[i]] = tmp[[1]][[i]]
+    for (j in 2:length(tmp)){
+        tmp1[[i]] = rbind(tmp1[[i]], tmp[[j]][[i]])
+    }
+  }
+  return(tmp1)
+  }
+
+
+exo_pos_list = project.combine(exo_pos)
+exo_neg_list = project.combine(exo_neg)
+wgs_pos_list = project.combine(wgs_pos)
+wgs_neg_list = project.combine(wgs_neg)
+
+exo_list = Map(rbind, exo_pos_list, exo_neg_list)
+wgs_list = Map(rbind, wgs_pos_list, wgs_neg_list)
+
+#Reordering factor levels for 
+reorder.class <- function(x) {
+  tmp = x
+  for (i in 1:length(tmp)) {
+    tmp[[i]][,5] = as.factor(as.character(tmp[[i]][,5]))
+    tmp[[i]][,5] = factor(tmp[[i]][,5], levels = c('none','Liver-HCC'))
+  }
+  return(tmp)
+}
+
+exo_list = reorder.class(exo_list)
+wgs_list = reorder.class(wgs_list)
+
+#Generating RoC curves
+library(caTools)
+source("C:/Users/Nick Cheng/Desktop/Lincoln Lab/All/colAUC_PR.R")
+colAUC(wgs_list[[1]][,2], wgs_list[[1]][,5], plotROC=T)
+colAUC_PR(wgs_list[[1]][,2], wgs_list[[1]][,5], plotROC=T)
+
+colAUC(wgs_list[[2]][,2], wgs_list[[2]][,5], plotROC=T)
+colAUC_PR(wgs_list[[2]][,2], wgs_list[[2]][,5], plotROC=T)
+
+colAUC(wgs_list[[3]][,2], wgs_list[[3]][,5], plotROC=T)
+colAUC_PR(wgs_list[[3]][,2], wgs_list[[3]][,5], plotROC=T)
+
+colAUC(wgs_list[[4]][,2], wgs_list[[4]][,5], plotROC=T)
+colAUC_PR(wgs_list[[4]][,2], wgs_list[[4]][,5], plotROC=T)
+
+
+colAUC(exo_list[[1]][,2], exo_list[[1]][,5], plotROC=T)
+colAUC_PR(exo_list[[1]][,2], exo_list[[1]][,5], plotROC=T)
+
+colAUC(exo_list[[2]][,2], exo_list[[2]][,5], plotROC=T)
+colAUC_PR(exo_list[[2]][,2], exo_list[[2]][,5], plotROC=T)
+
+colAUC(exo_list[[3]][,2], exo_list[[3]][,5], plotROC=T)
+colAUC_PR(exo_list[[3]][,2], exo_list[[3]][,5], plotROC=T)
+
+colAUC(exo_list[[4]][,2], exo_list[[4]][,5], plotROC=T)
+colAUC_PR(exo_list[[4]][,2], exo_list[[4]][,5], plotROC=T)
