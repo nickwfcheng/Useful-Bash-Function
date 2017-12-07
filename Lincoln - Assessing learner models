@@ -82,3 +82,40 @@ exo_cutoff[[2]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-H
 exo_cutoff[[3]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[3]], method = "MaxProdSpSe")
 exo_cutoff[[4]] = optimal.cutpoints('Liver-HCC', 'class', tag.healthy = 'Liver-HCC', data = exo_list[[4]], method = "MaxProdSpSe")
 
+#Creating matrices based on new cutoffs
+new.pred.class <- function(x, y) {
+  tmp = x
+  for (i in 1:length(x)){
+    tmp[[i]]$new.pred.class = ifelse(tmp[[i]]$'Liver-HCC' >= y[[i]]$MaxProdSpSe$Global$optimal.cutoff$cutoff, 'Liver-HCC', 'none')
+  }
+  return(tmp)
+}
+wgs_list = new.pred.class(wgs_list, wgs_cutoff)
+exo_list = new.pred.class(exo_list, exo_cutoff)
+
+reorder.class <- function(x) {
+  tmp = x
+  for (i in 1:length(tmp)) {
+    tmp[[i]][,6] = as.factor(as.character(tmp[[i]][,6]))
+    tmp[[i]][,6] = factor(tmp[[i]][,6], levels = c('none','Liver-HCC'))
+  }
+  return(tmp)
+}
+wgs_list = reorder.class(wgs_list)
+exo_list = reorder.class(exo_list)
+
+library(caret)
+create.matrix = function(x) {
+  tmp = x
+  tmp1 = list()
+  for (i in 1:length(x)){
+    tmp1[[i]] = confusionMatrix(table(tmp[[i]][,5:6]), positive = 'Liver-HCC')
+  }
+  return(tmp1)
+}
+
+wgs_matrix = create.matrix(wgs_list)
+exo_matrix = create.matrix(exo_list)
+
+saveRDS(wgs_matrix, 'wgs_matrix.RDS')
+saveRDS(exo_matrix, 'exo_matrix.RDS')
