@@ -184,10 +184,9 @@ saveRDS(pred.test.COAD_US_exo, 'COAD_US_exo.RDS')
 
 save.image('COAD_US_wgs.RData')
 
-
 #Creating Bins
 COAD_US_single$bin = ceiling(COAD_US_single$chromosome_start / 999999)
-COAD_US_single$bin = paste(COAD_US_single$chromosome, COAD_US_single$bin, sep = '.')
+COAD_US_single$bin = paste(COAD_US_single$chromosome, (COAD_US_single$bin - 1), sep = '.')
 COAD_US_single$bin = paste('chr', COAD_US_single$bin, sep = '')
 
 #Counting bins
@@ -207,3 +206,10 @@ COAD_US_list[[4]] = dcast(COAD_US_bin_count, icgc_donor_id ~ bin, value.var = 'p
 #Converting NAs to 0
 COAD_US_list = lapply(COAD_US_list ,function(x) replace(x,is.na(x),0))
 COAD_US_matrix[[4]] = COAD_US_list[[4]]
+
+COAD_US_bin_exo = COAD_US_matrix[[4]]
+COAD_US_bin_wgs = COAD_US_matrix[[4]]
+
+colnames(COAD_US_bin_wgs)[-1] = paste('SNV', colnames(COAD_US_bin_wgs)[-1], sep = ".")
+colnames(COAD_US_bin_exo)[-1] = paste('EXS', colnames(COAD_US_bin_exo)[-1], sep = ".")
+
