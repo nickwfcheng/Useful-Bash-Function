@@ -1,103 +1,102 @@
 ##R - Single matrix mutation type vs samples
 #Importing file
-SKCM_US_sample = read.table(file = 'SKCM-US.txt', header = T, sep = '\t')
+COAD_US_sample = read.table(file = 'COAD-US.txt', header = T, sep = '\t')
 
 #Only keeping single base substitutions
-SKCM_US_single = SKCM_US_sample[SKCM_US_sample$mutation_type == 'single base substitution',]
-SKCM_US_single = SKCM_US_single[,-c(2,3,7,8,12,13)]
+COAD_US_single = COAD_US_sample[COAD_US_sample$mutation_type == 'single base substitution',]
+COAD_US_single = COAD_US_single[,-c(2,3,7,8,12,13)]
 
 #Removing duplicated positions
 library(data.table)
-SKCM_US_single = unique(setDT(SKCM_US_single), by = c("icgc_donor_id" , "chromosome" , "chromosome_start", "chromosome_end"))
+COAD_US_single = unique(setDT(COAD_US_single), by = c("icgc_donor_id" , "chromosome" , "chromosome_start", "chromosome_end"))
 
 #Summarizing snv mutation to one column
-SKCM_US_single$mutation = paste(SKCM_US_single$mutated_from_allele, SKCM_US_single$mutated_to_allele, sep=':')
+COAD_US_single$mutation = paste(COAD_US_single$mutated_from_allele, COAD_US_single$mutated_to_allele, sep=':')
 
 #Removing non-mutations (eg A -> A, T -> T)
-SKCM_US_single = SKCM_US_single[SKCM_US_single$mutation != 'A:A' & SKCM_US_single$mutation != 'T:T' & SKCM_US_single$mutation != 'C:C' & SKCM_US_single$mutation != 'G:G',]
+COAD_US_single = COAD_US_single[COAD_US_single$mutation != 'A:A' & COAD_US_single$mutation != 'T:T' & COAD_US_single$mutation != 'C:C' & COAD_US_single$mutation != 'G:G',]
 
 #Converting mutation column to factor
-SKCM_US_single$mutation = as.factor(SKCM_US_single$mutation)
+COAD_US_single$mutation = as.factor(COAD_US_single$mutation)
 
 #Counting number of each type of mutation per sample
 library(dplyr)
 library(magrittr)
-SKCM_US_single %>% 
+COAD_US_single %>% 
   group_by(icgc_donor_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> SKCM_US_count
+  summarise(no_rows = length(mutation)) -> COAD_US_count
 
 #Normalising counts 
-sample_count = aggregate(SKCM_US_count$no_rows, by=list(SKCM_US_count$icgc_donor_id), FUN=sum)
+sample_count = aggregate(COAD_US_count$no_rows, by=list(COAD_US_count$icgc_donor_id), FUN=sum)
 colnames(sample_count) = c('icgc_donor_id', 'sample_total_count')
-SKCM_US_count = merge(SKCM_US_count, sample_count, by = 'icgc_donor_id', all = T)
-SKCM_US_count$proportion = SKCM_US_count$no_rows/SKCM_US_count$sample_total_count
+COAD_US_count = merge(COAD_US_count, sample_count, by = 'icgc_donor_id', all = T)
+COAD_US_count$proportion = COAD_US_count$no_rows/COAD_US_count$sample_total_count
 
 #Repeating above steps for dinucleotide mutations
 library('BSgenome.Hsapiens.UCSC.hg19')
-SKCM_US_double = SKCM_US_single
-SKCM_US_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',SKCM_US_double$chromosome, sep='')), start = SKCM_US_double$chromosome_start - 1, end = SKCM_US_double$chromosome_end - 1))
-SKCM_US_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',SKCM_US_double$chromosome, sep='')), start = SKCM_US_double$chromosome_start + 1, end = SKCM_US_double$chromosome_end + 1))
+COAD_US_double = COAD_US_single
+COAD_US_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_double$chromosome, sep='')), start = COAD_US_double$chromosome_start - 1, end = COAD_US_double$chromosome_end - 1))
+COAD_US_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_double$chromosome, sep='')), start = COAD_US_double$chromosome_start + 1, end = COAD_US_double$chromosome_end + 1))
 
-SKCM_US_double1 = SKCM_US_double
+COAD_US_double1 = COAD_US_double
 
-SKCM_US_double$mutated_from_allele = paste(SKCM_US_double$'flank(left)', SKCM_US_double$mutated_from_allele, sep='')
-SKCM_US_double$mutated_to_allele = paste(SKCM_US_double$'flank(left)', SKCM_US_double$mutated_to_allele, sep='')
+COAD_US_double$mutated_from_allele = paste(COAD_US_double$'flank(left)', COAD_US_double$mutated_from_allele, sep='')
+COAD_US_double$mutated_to_allele = paste(COAD_US_double$'flank(left)', COAD_US_double$mutated_to_allele, sep='')
 
-SKCM_US_double$mutation = paste(SKCM_US_double$mutated_from_allele, SKCM_US_double$mutated_to_allele, sep=':')
+COAD_US_double$mutation = paste(COAD_US_double$mutated_from_allele, COAD_US_double$mutated_to_allele, sep=':')
 
-SKCM_US_double %>% 
+COAD_US_double %>% 
   group_by(icgc_donor_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> SKCM_US_count_di
+  summarise(no_rows = length(mutation)) -> COAD_US_count_di
 
 #Repeating for snv + right flanking nucleotides
-SKCM_US_double1$mutated_from_allele = paste(SKCM_US_double1$mutated_from_allele, SKCM_US_double1$'flank(right)', sep='')
-SKCM_US_double1$mutated_to_allele = paste(SKCM_US_double1$mutated_to_allele, SKCM_US_double1$'flank(right)', sep='')
+COAD_US_double1$mutated_from_allele = paste(COAD_US_double1$mutated_from_allele, COAD_US_double1$'flank(right)', sep='')
+COAD_US_double1$mutated_to_allele = paste(COAD_US_double1$mutated_to_allele, COAD_US_double1$'flank(right)', sep='')
 
-SKCM_US_double1$mutation = paste(SKCM_US_double1$mutated_from_allele, SKCM_US_double1$mutated_to_allele, sep=':')
+COAD_US_double1$mutation = paste(COAD_US_double1$mutated_from_allele, COAD_US_double1$mutated_to_allele, sep=':')
 
-SKCM_US_double1 %>% 
+COAD_US_double1 %>% 
   group_by(icgc_donor_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> SKCM_US_count_di1
+  summarise(no_rows = length(mutation)) -> COAD_US_count_di1
 
 #Combining both dinucleotide snv counts
-SKCM_US_count_di = rbind(as.data.frame(SKCM_US_count_di), as.data.frame(SKCM_US_count_di1))
+COAD_US_count_di = rbind(as.data.frame(COAD_US_count_di), as.data.frame(COAD_US_count_di1))
 
-sample_count_di = aggregate(SKCM_US_count_di$no_rows, by=list(SKCM_US_count_di$icgc_donor_id), FUN=sum)
+sample_count_di = aggregate(COAD_US_count_di$no_rows, by=list(COAD_US_count_di$icgc_donor_id), FUN=sum)
 colnames(sample_count_di) = c('icgc_donor_id', 'sample_total_count_di')
-SKCM_US_count_di = merge(SKCM_US_count_di, sample_count_di, by = 'icgc_donor_id', all = T)
-SKCM_US_count_di$proportion = SKCM_US_count_di$no_rows/SKCM_US_count_di$sample_total_count_di
+COAD_US_count_di = merge(COAD_US_count_di, sample_count_di, by = 'icgc_donor_id', all = T)
+COAD_US_count_di$proportion = COAD_US_count_di$no_rows/COAD_US_count_di$sample_total_count_di
 
 #Repeating above steps fro trinucleotide mutations
-SKCM_US_triple = SKCM_US_double
-SKCM_US_triple$mutated_from_allele = paste(SKCM_US_triple$mutated_from_allele,SKCM_US_triple$'flank(right)', sep='')
-SKCM_US_triple$mutated_to_allele = paste(SKCM_US_triple$mutated_to_allele,SKCM_US_triple$'flank(right)', sep='')
-SKCM_US_triple$mutation = paste(SKCM_US_triple$mutated_from_allele, SKCM_US_triple$mutated_to_allele, sep=':')
+COAD_US_triple = COAD_US_double
+COAD_US_triple$mutated_from_allele = paste(COAD_US_triple$mutated_from_allele,COAD_US_triple$'flank(right)', sep='')
+COAD_US_triple$mutated_to_allele = paste(COAD_US_triple$mutated_to_allele,COAD_US_triple$'flank(right)', sep='')
+COAD_US_triple$mutation = paste(COAD_US_triple$mutated_from_allele, COAD_US_triple$mutated_to_allele, sep=':')
 
-SKCM_US_triple %>% 
+COAD_US_triple %>% 
   group_by(icgc_donor_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> SKCM_US_count_tri
+  summarise(no_rows = length(mutation)) -> COAD_US_count_tri
 
-sample_count_tri = aggregate(SKCM_US_count_tri$no_rows, by=list(SKCM_US_count_tri$icgc_donor_id), FUN=sum)
+sample_count_tri = aggregate(COAD_US_count_tri$no_rows, by=list(COAD_US_count_tri$icgc_donor_id), FUN=sum)
 colnames(sample_count_tri) = c('icgc_donor_id', 'sample_total_count_tri')
-SKCM_US_count_tri = merge(SKCM_US_count_tri, sample_count_tri, by = 'icgc_donor_id', all = T)
-SKCM_US_count_tri$proportion = SKCM_US_count_tri$no_rows/SKCM_US_count_tri$sample_total_count_tri
+COAD_US_count_tri = merge(COAD_US_count_tri, sample_count_tri, by = 'icgc_donor_id', all = T)
+COAD_US_count_tri$proportion = COAD_US_count_tri$no_rows/COAD_US_count_tri$sample_total_count_tri
 
 #Checking if reference genome matches 
-SKCM_US_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',SKCM_US_single$chromosome, sep='')), start = SKCM_US_single$chromosome_start, end = SKCM_US_single$chromosome_end))
-SKCM_US_single$check = ifelse(SKCM_US_single$mutated_from_allele == SKCM_US_single$ref_allele,  0,  1)
-sum(SKCM_US_single$check)
+COAD_US_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_single$chromosome, sep='')), start = COAD_US_single$chromosome_start, end = COAD_US_single$chromosome_end))
+COAD_US_single$check = ifelse(COAD_US_single$mutated_from_allele == COAD_US_single$ref_allele,  0,  1)
+sum(COAD_US_single$check)
 
 #Coercing counts to a list
-SKCM_US_list = list()
-SKCM_US_list[[1]] = dcast(SKCM_US_count, icgc_donor_id ~ mutation, value.var = 'proportion')
-SKCM_US_list[[2]] = dcast(SKCM_US_count_di, icgc_donor_id ~ mutation, value.var = 'proportion')
-SKCM_US_list[[3]] = dcast(SKCM_US_count_tri, icgc_donor_id ~ mutation, value.var = 'proportion')
+COAD_US_list = list()
+COAD_US_list[[1]] = dcast(COAD_US_count, icgc_donor_id ~ mutation, value.var = 'proportion')
+COAD_US_list[[2]] = dcast(COAD_US_count_di, icgc_donor_id ~ mutation, value.var = 'proportion')
+COAD_US_list[[3]] = dcast(COAD_US_count_tri, icgc_donor_id ~ mutation, value.var = 'proportion')
 
-#Converting NAs to 0
-SKCM_US_list = lapply(SKCM_US_list ,function(x) replace(x,is.na(x),0))
+
 
 #Joining identical mutations
-SKCM_US_matrix = list()
+COAD_US_matrix = list()
 n.combine <- function(x) {
   tmp = x
   mid = ceiling(ncol(tmp)/2)
@@ -108,7 +107,7 @@ n.combine <- function(x) {
   rownames(tmp) = tmp[,1]
   return(tmp[,1:(ceiling(ncol(tmp)/2))])
 }
-SKCM_US_matrix[[1]] = n.combine(SKCM_US_list[[1]])
+COAD_US_matrix[[1]] = n.combine(COAD_US_list[[1]])
 
 n.combine2 <- function(x) {
   tmp = x
@@ -122,7 +121,7 @@ n.combine2 <- function(x) {
   tmp1 = tmp[,c(1,2:13, 17:19, 23:38, 42:44, 48:49, 52:54, 58:60, 77:79, 83:85)]
   return(tmp1)
 }
-SKCM_US_matrix[[2]] = n.combine2(SKCM_US_list[[2]])
+COAD_US_matrix[[2]] = n.combine2(COAD_US_list[[2]])
 
 n.combine3 <- function(x) {
   tmp = x
@@ -136,28 +135,29 @@ n.combine3 <- function(x) {
   tmp1 = tmp[,c(1, 2:25, 50:73, 98:121, 146:169)]
   return(tmp1)
 }
-SKCM_US_matrix[[3]] = n.combine3(SKCM_US_list[[3]])
+COAD_US_matrix[[3]] = n.combine3(COAD_US_list[[3]])
 
-SKCM_US_matrix = lapply(SKCM_US_matrix ,function(x) replace(x,is.na(x),0))
+
+COAD_US_matrix = lapply(COAD_US_matrix ,function(x) replace(x,is.na(x),0))
 
 #Plotting heatmaps for each mutation type
 library(pheatmap)
-SKCM_US_snv_plot = pheatmap(SKCM_US_matrix[[1]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
-SKCM_US_dnv_plot = pheatmap(SKCM_US_matrix[[2]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
-SKCM_US_tnv_plot = pheatmap(SKCM_US_matrix[[3]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_snv_plot = pheatmap(COAD_US_matrix[[1]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_dnv_plot = pheatmap(COAD_US_matrix[[2]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_tnv_plot = pheatmap(COAD_US_matrix[[3]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
 
 #Combining all three groups of mutations
 merge.all <- function(x, y) {
   merge(x, y, all=TRUE, by=c('icgc_donor_id'))
 }
-SKCM_US = Reduce(merge.all, SKCM_US_matrix)
+COAD_US = Reduce(merge.all, COAD_US_matrix)
 
 #changing column names to match learner
-colnames(SKCM_US) = gsub(':', '..', colnames(SKCM_US))
+colnames(COAD_US) = gsub(':', '..', colnames(COAD_US))
 
 #Normalising data to mean and sd
-SKCM_US_wgs = (SKCM_US[,-1] - mean.mut.wgs)/sd.mut.wgs
-SKCM_US_exo = (SKCM_US[,-1] - mean.mut.exo)/sd.mut.exo
+COAD_US_wgs = (COAD_US[,-1] - mean.mut.wgs)/sd.mut.wgs
+COAD_US_exo = (COAD_US[,-1] - mean.mut.exo)/sd.mut.exo
 
 #Applinyg machine learning model to dataset
 library(mlr)
@@ -176,10 +176,34 @@ pred.test <- function(x, y, z, donor) {
   }
   return(tmp)
 }
-pred.test.SKCM_US_wgs = pred.test(mut.wgs.mod.list, SKCM_US_wgs, 'none', SKCM_US_list[[1]][,1])
-pred.test.SKCM_US_exo = pred.test(mut.exo.mod.list, SKCM_US_exo, 'none', SKCM_US_list[[1]][,1])
+pred.test.COAD_US_wgs = pred.test(mut.wgs.mod.list, COAD_US_wgs, 'none', COAD_US_list[[1]][,1])
+pred.test.COAD_US_exo = pred.test(mut.exo.mod.list, COAD_US_exo, 'none', COAD_US_list[[1]][,1])
 
-saveRDS(pred.test.SKCM_US_wgs, 'SKCM_US_wgs.RDS')
-saveRDS(pred.test.SKCM_US_exo, 'SKCM_US_exo.RDS')
+saveRDS(pred.test.COAD_US_wgs, 'COAD_US_wgs.RDS')
+saveRDS(pred.test.COAD_US_exo, 'COAD_US_exo.RDS')
 
-save.image('SKCM_US_wgs.RData')
+save.image('COAD_US_wgs.RData')
+
+
+#Creating Bins
+COAD_US_single$bin = ceiling(COAD_US_single$chromosome_start / 999999)
+COAD_US_single$bin = paste(COAD_US_single$chromosome, COAD_US_single$bin, sep = '.')
+COAD_US_single$bin = paste('chr', COAD_US_single$bin, sep = '')
+
+#Counting bins
+COAD_US_single %>% 
+  group_by(icgc_donor_id, bin) %>%
+  summarise(no_rows = length(bin)) -> COAD_US_bin_count
+
+#Normalising bin counts 
+sample_count = aggregate(COAD_US_bin_count$no_rows, by=list(COAD_US_bin_count$icgc_donor_id), FUN=sum)
+colnames(sample_count) = c('icgc_donor_id', 'sample_total_count')
+COAD_US_bin_count = merge(COAD_US_bin_count, sample_count, by = 'icgc_donor_id', all = T)
+COAD_US_bin_count$proportion = COAD_US_bin_count$no_rows/COAD_US_bin_count$sample_total_count
+
+#Converting bin counts to matrix
+COAD_US_list[[4]] = dcast(COAD_US_bin_count, icgc_donor_id ~ bin, value.var = 'proportion')
+
+#Converting NAs to 0
+COAD_US_list = lapply(COAD_US_list ,function(x) replace(x,is.na(x),0))
+COAD_US_matrix[[4]] = COAD_US_list[[4]]
