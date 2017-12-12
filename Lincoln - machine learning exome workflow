@@ -184,8 +184,9 @@ saveRDS(pred.test.COAD_US_exo, 'COAD_US_exo.RDS')
 
 save.image('COAD_US_wgs.RData')
 
+
 #Creating Bins
-COAD_US_single$bin = ceiling(COAD_US_single$chromosome_start / 999999)
+COAD_US_single$bin = ceiling(COAD_US_single$chromosome_start / 1000000)
 COAD_US_single$bin = paste(COAD_US_single$chromosome, (COAD_US_single$bin - 1), sep = '.')
 COAD_US_single$bin = paste('chr', COAD_US_single$bin, sep = '')
 
@@ -213,3 +214,44 @@ COAD_US_bin_wgs = COAD_US_matrix[[4]]
 colnames(COAD_US_bin_wgs)[-1] = paste('SNV', colnames(COAD_US_bin_wgs)[-1], sep = ".")
 colnames(COAD_US_bin_exo)[-1] = paste('EXS', colnames(COAD_US_bin_exo)[-1], sep = ".")
 
+##WIP##
+#Add in missing columns to dfs
+add.cols <- function(x, y) {
+  tmp = setdiff(names(y), colnames(x))
+  tmp1 = as.data.frame(setNames(replicate(length(tmp),numeric(0), simplify = F), tmp))
+  tmp1[1:nrow(x),] = 0
+  tmp2 = x
+  tmp2 = cbind(tmp2, tmp1)
+  tmp.names = tmp2[,1]
+  tmp2 = tmp2[,-1]
+  tmp2 = tmp2[,match(names(y), colnames(tmp2))]
+  tmp2 = cbind(tmp.names, tmp2)
+  return(tmp2)
+}
+
+COAD_US_bin_wgs = add.cols(COAD_US_bin_wgs, mean.snv.bins.wgs)
+
+#Normalising data with mean and sd
+COAD_US_bin_wgs = (COAD_US_bin_wgs[,-1] - mean.snv.bins.wgs)/sd.snv.bins.wgs
+
+#combining mutation info and bin snv counts
+COAD_US_bin_wgs = cbind(COAD_US_bin_wgs, COAD_US_wgs)
+
+#Applying machine learning model to dataset
+library(mlr)
+library(randomForest)
+pred.test <- function(model, data, class, donor) {
+  tmp = list()
+  for (i in 1:4) {
+    tmp[[i]] = as.data.frame(predict(model[[i]]$learner.model, newdata = data))
+    tmp1 = predict(model[[i]]$learner.model, newdata = data, type = "prob")
+    tmp2 = class
+    tmp[[i]] = cbind(tmp1, tmp[[i]])
+    colnames(tmp[[i]])[3] = 'pred.class'
+    tmp[[i]][4] = class
+    colnames(tmp[[i]])[4] = 'class'
+    tmp[[i]] = cbind(donor, tmp[[i]])
+  }
+  return(tmp)
+}
+pred.test.COAD_US_bin_wgs = pred.test(mut.wgs.snv.mod.list, COAD_US_bin_wgs, 'none', COAD_US_matrix[[4]][,1])
