@@ -155,6 +155,14 @@ COAD_US = Reduce(merge.all, COAD_US_matrix)
 #changing column names to match learner
 colnames(COAD_US) = gsub(':', '..', colnames(COAD_US))
 
+#Reading updated mean and sd for exo/wgs model
+mean.mut.wgs = readRDS('mean.mut.wgs.RDS')
+mean.mut.exo = readRDS('mean.mut.exo.RDS')
+sd.mut.wgs = readRDS('sd.mut.wgs.RDS')
+sd.mut.exo = readRDS('sd.mut.exo.RDS')
+mut.wgs.mod.list = readRDS('mut.wgs.mod.list.RDS')
+mut.exo.mod.list = readRDS('mut.exo.mod.list.RDS')
+
 #Normalising data to mean and sd
 COAD_US_wgs = (COAD_US[,-1] - mean.mut.wgs)/sd.mut.wgs
 COAD_US_exo = (COAD_US[,-1] - mean.mut.exo)/sd.mut.exo
@@ -255,3 +263,6 @@ pred.test <- function(model, data, class, donor) {
   return(tmp)
 }
 pred.test.COAD_US_bin_wgs = pred.test(mut.wgs.snv.mod.list, COAD_US_bin_wgs, 'none', COAD_US_matrix[[4]][,1])
+
+
+saveRDS(pred.test.COAD_US_bin_wgs, 'COAD_US_bin_wgs.RDS')
