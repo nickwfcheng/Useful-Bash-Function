@@ -1,0 +1,55 @@
+#Importing files 
+exo_pos = lapply(list.files(pattern = "*\\.mut.RDS"), readRDS)
+exo_neg = lapply(list.files(pattern = "*_mut.RDS"), readRDS)
+
+#Combining list of dfs
+library(plyr)
+exo_neg = ldply(exo_neg, data.frame)
+exo_pos = exo_pos[[1]]
+
+#Adding in class information
+exo_neg$class = 'none'
+exo_pos$class = 'Liver-HCC'
+
+#Combining dfs
+mut_data = rbind(exo_neg, exo_pos)
+
+#Reordering factor levels for 
+reorder.class <- function(x) {
+  tmp = x
+  num = ncol(x)
+  tmp[,num] = as.factor(as.character(tmp[,num]))
+  tmp[,num] = factor(tmp[,num], levels = c('none','Liver-HCC'))
+  return(tmp)
+}
+
+mut_data = reorder.class(mut_data)
+
+#Splitting datasets - 75% of the sample
+smp_size = floor(0.75* nrow(mut_data))
+set.seed(123) #setting seed to make partition reproducible
+train_ind = sample(seq_len(nrow(mut_data)), size = smp_size)
+train = mut_data[train_ind,]
+test = mut_data[-train_ind,]
+
+#Creaing learner model
+library(mlr)
+library(caret)
+mut_task = makeClassifTask(data = mut_data[,-1], target = 'class')
+mut_lrn = makeLearner('classif.lda')
+mut_mod = mlr::train(mut_lrn, mut_task)
+
+#Testing model
+mut_task_test = makeClassifTask(data = test[,-1], target = 'class')
+task.pred = predict(mut_mod, task = mut_task_test)
+
+#Generating confusion matrices
+create.matrix = function(x) {
+  tmp = x
+  tmp1= confusionMatrix(table(as.data.frame(tmp)[,2:3]), positive = 'Liver-HCC')
+  return(tmp1)
+}
+create.matrix(task.pred)
+
+save = 'new_model.RData'
+save.image(save)
