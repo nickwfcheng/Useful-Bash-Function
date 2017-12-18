@@ -49,7 +49,8 @@ create.matrix = function(x) {
   tmp1= confusionMatrix(table(as.data.frame(tmp)[,2:3]), positive = 'Liver-HCC')
   return(tmp1)
 }
-create.matrix(task.pred)
+task.matrix = create.matrix(task.pred)
+task.matrix
 
 save = 'new_model.RData'
 save.image(save)
