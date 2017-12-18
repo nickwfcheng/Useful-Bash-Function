@@ -1,102 +1,102 @@
 ##R - Single matrix mutation type vs samples
 #Importing file
-liver_sample = read.table(file = 'SKCM-US.txt', header = T, sep = '\t')
+COAD_US_sample = read.table(file = 'COAD-US.txt', header = T, sep = '\t')
 
 #Only keeping single base substitutions
-liver_single = liver_sample[liver_sample$mutation_type == 'single base substitution',]
-liver_single = liver_single[,-c(2,3,7,8,12,13)]
+COAD_US_single = COAD_US_sample[COAD_US_sample$mutation_type == 'single base substitution',]
+COAD_US_single = COAD_US_single[,-c(2,3,7,8,12,13)]
 
 #Removing duplicated positions
 library(data.table)
-liver_single = unique(setDT(liver_single), by = c("icgc_sample_id" , "chromosome" , "chromosome_start", "chromosome_end"))
+COAD_US_single = unique(setDT(COAD_US_single), by = c("icgc_donor_id" , "chromosome" , "chromosome_start", "chromosome_end"))
 
 #Summarizing snv mutation to one column
-liver_single$mutation = paste(liver_single$mutated_from_allele, liver_single$mutated_to_allele, sep=':')
+COAD_US_single$mutation = paste(COAD_US_single$mutated_from_allele, COAD_US_single$mutated_to_allele, sep=':')
 
 #Removing non-mutations (eg A -> A, T -> T)
-liver_single = liver_single[liver_single$mutation != 'A:A' & liver_single$mutation != 'T:T' & liver_single$mutation != 'C:C' & liver_single$mutation != 'G:G',]
+COAD_US_single = COAD_US_single[COAD_US_single$mutation != 'A:A' & COAD_US_single$mutation != 'T:T' & COAD_US_single$mutation != 'C:C' & COAD_US_single$mutation != 'G:G',]
 
 #Converting mutation column to factor
-liver_single$mutation = as.factor(liver_single$mutation)
+COAD_US_single$mutation = as.factor(COAD_US_single$mutation)
 
 #Counting number of each type of mutation per sample
 library(dplyr)
 library(magrittr)
-liver_single %>% 
-  group_by(icgc_sample_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> liver_count
+COAD_US_single %>% 
+  group_by(icgc_donor_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> COAD_US_count
 
 #Normalising counts 
-sample_count = aggregate(liver_count$no_rows, by=list(liver_count$icgc_sample_id), FUN=sum)
-colnames(sample_count) = c('icgc_sample_id', 'sample_total_count')
-liver_count = merge(liver_count, sample_count, by = 'icgc_sample_id', all = T)
-liver_count$proportion = liver_count$no_rows/liver_count$sample_total_count
+sample_count = aggregate(COAD_US_count$no_rows, by=list(COAD_US_count$icgc_donor_id), FUN=sum)
+colnames(sample_count) = c('icgc_donor_id', 'sample_total_count')
+COAD_US_count = merge(COAD_US_count, sample_count, by = 'icgc_donor_id', all = T)
+COAD_US_count$proportion = COAD_US_count$no_rows/COAD_US_count$sample_total_count
 
 #Repeating above steps for dinucleotide mutations
 library('BSgenome.Hsapiens.UCSC.hg19')
-liver_double = liver_single
-liver_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start - 1, end = liver_double$chromosome_end - 1))
-liver_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_double$chromosome, sep='')), start = liver_double$chromosome_start + 1, end = liver_double$chromosome_end + 1))
+COAD_US_double = COAD_US_single
+COAD_US_double$'flank(left)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_double$chromosome, sep='')), start = COAD_US_double$chromosome_start - 1, end = COAD_US_double$chromosome_end - 1))
+COAD_US_double$'flank(right)' = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_double$chromosome, sep='')), start = COAD_US_double$chromosome_start + 1, end = COAD_US_double$chromosome_end + 1))
 
-liver_double1 = liver_double
+COAD_US_double1 = COAD_US_double
 
-liver_double$mutated_from_allele = paste(liver_double$'flank(left)', liver_double$mutated_from_allele, sep='')
-liver_double$mutated_to_allele = paste(liver_double$'flank(left)', liver_double$mutated_to_allele, sep='')
+COAD_US_double$mutated_from_allele = paste(COAD_US_double$'flank(left)', COAD_US_double$mutated_from_allele, sep='')
+COAD_US_double$mutated_to_allele = paste(COAD_US_double$'flank(left)', COAD_US_double$mutated_to_allele, sep='')
 
-liver_double$mutation = paste(liver_double$mutated_from_allele, liver_double$mutated_to_allele, sep=':')
+COAD_US_double$mutation = paste(COAD_US_double$mutated_from_allele, COAD_US_double$mutated_to_allele, sep=':')
 
-liver_double %>% 
-  group_by(icgc_sample_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> liver_count_di
+COAD_US_double %>% 
+  group_by(icgc_donor_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> COAD_US_count_di
 
 #Repeating for snv + right flanking nucleotides
-liver_double1$mutated_from_allele = paste(liver_double1$mutated_from_allele, liver_double1$'flank(right)', sep='')
-liver_double1$mutated_to_allele = paste(liver_double1$mutated_to_allele, liver_double1$'flank(right)', sep='')
+COAD_US_double1$mutated_from_allele = paste(COAD_US_double1$mutated_from_allele, COAD_US_double1$'flank(right)', sep='')
+COAD_US_double1$mutated_to_allele = paste(COAD_US_double1$mutated_to_allele, COAD_US_double1$'flank(right)', sep='')
 
-liver_double1$mutation = paste(liver_double1$mutated_from_allele, liver_double1$mutated_to_allele, sep=':')
+COAD_US_double1$mutation = paste(COAD_US_double1$mutated_from_allele, COAD_US_double1$mutated_to_allele, sep=':')
 
-liver_double1 %>% 
-  group_by(icgc_sample_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> liver_count_di1
+COAD_US_double1 %>% 
+  group_by(icgc_donor_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> COAD_US_count_di1
 
 #Combining both dinucleotide snv counts
-liver_count_di = rbind(as.data.frame(liver_count_di), as.data.frame(liver_count_di1))
+COAD_US_count_di = rbind(as.data.frame(COAD_US_count_di), as.data.frame(COAD_US_count_di1))
 
-sample_count_di = aggregate(liver_count_di$no_rows, by=list(liver_count_di$icgc_sample_id), FUN=sum)
-colnames(sample_count_di) = c('icgc_sample_id', 'sample_total_count_di')
-liver_count_di = merge(liver_count_di, sample_count_di, by = 'icgc_sample_id', all = T)
-liver_count_di$proportion = liver_count_di$no_rows/liver_count_di$sample_total_count_di
+sample_count_di = aggregate(COAD_US_count_di$no_rows, by=list(COAD_US_count_di$icgc_donor_id), FUN=sum)
+colnames(sample_count_di) = c('icgc_donor_id', 'sample_total_count_di')
+COAD_US_count_di = merge(COAD_US_count_di, sample_count_di, by = 'icgc_donor_id', all = T)
+COAD_US_count_di$proportion = COAD_US_count_di$no_rows/COAD_US_count_di$sample_total_count_di
 
 #Repeating above steps fro trinucleotide mutations
-liver_triple = liver_double
-liver_triple$mutated_from_allele = paste(liver_triple$mutated_from_allele,liver_triple$'flank(right)', sep='')
-liver_triple$mutated_to_allele = paste(liver_triple$mutated_to_allele,liver_triple$'flank(right)', sep='')
-liver_triple$mutation = paste(liver_triple$mutated_from_allele, liver_triple$mutated_to_allele, sep=':')
+COAD_US_triple = COAD_US_double
+COAD_US_triple$mutated_from_allele = paste(COAD_US_triple$mutated_from_allele,COAD_US_triple$'flank(right)', sep='')
+COAD_US_triple$mutated_to_allele = paste(COAD_US_triple$mutated_to_allele,COAD_US_triple$'flank(right)', sep='')
+COAD_US_triple$mutation = paste(COAD_US_triple$mutated_from_allele, COAD_US_triple$mutated_to_allele, sep=':')
 
-liver_triple %>% 
-  group_by(icgc_sample_id, mutation) %>%
-  summarise(no_rows = length(mutation)) -> liver_count_tri
+COAD_US_triple %>% 
+  group_by(icgc_donor_id, mutation) %>%
+  summarise(no_rows = length(mutation)) -> COAD_US_count_tri
 
-sample_count_tri = aggregate(liver_count_tri$no_rows, by=list(liver_count_tri$icgc_sample_id), FUN=sum)
-colnames(sample_count_tri) = c('icgc_sample_id', 'sample_total_count_tri')
-liver_count_tri = merge(liver_count_tri, sample_count_tri, by = 'icgc_sample_id', all = T)
-liver_count_tri$proportion = liver_count_tri$no_rows/liver_count_tri$sample_total_count_tri
+sample_count_tri = aggregate(COAD_US_count_tri$no_rows, by=list(COAD_US_count_tri$icgc_donor_id), FUN=sum)
+colnames(sample_count_tri) = c('icgc_donor_id', 'sample_total_count_tri')
+COAD_US_count_tri = merge(COAD_US_count_tri, sample_count_tri, by = 'icgc_donor_id', all = T)
+COAD_US_count_tri$proportion = COAD_US_count_tri$no_rows/COAD_US_count_tri$sample_total_count_tri
 
 #Checking if reference genome matches 
-liver_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',liver_single$chromosome, sep='')), start = liver_single$chromosome_start, end = liver_single$chromosome_end))
-liver_single$check = ifelse(liver_single$mutated_from_allele == liver_single$ref_allele,  0,  1)
-sum(liver_single$check)
+COAD_US_single$ref_allele = as.vector(getSeq(Hsapiens, as.character(paste('chr',COAD_US_single$chromosome, sep='')), start = COAD_US_single$chromosome_start, end = COAD_US_single$chromosome_end))
+COAD_US_single$check = ifelse(COAD_US_single$mutated_from_allele == COAD_US_single$ref_allele,  0,  1)
+sum(COAD_US_single$check)
 
 #Coercing counts to a list
-liver_list = list()
-liver_list[[1]] = dcast(liver_count, icgc_sample_id ~ mutation, value.var = 'proportion')
-liver_list[[2]] = dcast(liver_count_di, icgc_sample_id ~ mutation, value.var = 'proportion')
-liver_list[[3]] = dcast(liver_count_tri, icgc_sample_id ~ mutation, value.var = 'proportion')
+COAD_US_list = list()
+COAD_US_list[[1]] = dcast(COAD_US_count, icgc_donor_id ~ mutation, value.var = 'proportion')
+COAD_US_list[[2]] = dcast(COAD_US_count_di, icgc_donor_id ~ mutation, value.var = 'proportion')
+COAD_US_list[[3]] = dcast(COAD_US_count_tri, icgc_donor_id ~ mutation, value.var = 'proportion')
 
 
 
 #Joining identical mutations
-liver_matrix = list()
+COAD_US_matrix = list()
 n.combine <- function(x) {
   tmp = x
   mid = ceiling(ncol(tmp)/2)
@@ -107,7 +107,7 @@ n.combine <- function(x) {
   rownames(tmp) = tmp[,1]
   return(tmp[,1:(ceiling(ncol(tmp)/2))])
 }
-liver_matrix[[1]] = n.combine(liver_list[[1]])
+COAD_US_matrix[[1]] = n.combine(COAD_US_list[[1]])
 
 n.combine2 <- function(x) {
   tmp = x
@@ -121,7 +121,7 @@ n.combine2 <- function(x) {
   tmp1 = tmp[,c(1,2:13, 17:19, 23:38, 42:44, 48:49, 52:54, 58:60, 77:79, 83:85)]
   return(tmp1)
 }
-liver_matrix[[2]] = n.combine2(liver_list[[2]])
+COAD_US_matrix[[2]] = n.combine2(COAD_US_list[[2]])
 
 n.combine3 <- function(x) {
   tmp = x
@@ -135,25 +135,28 @@ n.combine3 <- function(x) {
   tmp1 = tmp[,c(1, 2:25, 50:73, 98:121, 146:169)]
   return(tmp1)
 }
-liver_matrix[[3]] = n.combine3(liver_list[[3]])
+COAD_US_matrix[[3]] = n.combine3(COAD_US_list[[3]])
 
 
-liver_matrix = lapply(liver_matrix ,function(x) replace(x,is.na(x),0))
+COAD_US_matrix = lapply(COAD_US_matrix ,function(x) replace(x,is.na(x),0))
 
 #Plotting heatmaps for each mutation type
 library(pheatmap)
-liver_snv_plot = pheatmap(liver_matrix[[1]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
-liver_dnv_plot = pheatmap(liver_matrix[[2]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
-liver_tnv_plot = pheatmap(liver_matrix[[3]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_snv_plot = pheatmap(COAD_US_matrix[[1]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_dnv_plot = pheatmap(COAD_US_matrix[[2]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
+COAD_US_tnv_plot = pheatmap(COAD_US_matrix[[3]][,-1], cluster_rows = F, cluster_cols = F, show_rownames = F)
 
 #Combining all three groups of mutations
 merge.all <- function(x, y) {
-  merge(x, y, all=TRUE, by=c('icgc_sample_id'))
+  merge(x, y, all=TRUE, by=c('icgc_donor_id'))
 }
-liver = Reduce(merge.all, liver_matrix)
+COAD_US = Reduce(merge.all, COAD_US_matrix)
 
 #changing column names to match learner
-colnames(liver) = gsub(':', '..', colnames(liver))
+colnames(COAD_US) = gsub(':', '..', colnames(COAD_US))
+
+#Saving mut matrix 
+saveRDS(COAD_US, 'COAD_US_mut.RDS')
 
 #Reading updated mean and sd for exo/wgs model
 mean.mut.wgs = readRDS('mean.mut.wgs.RDS')
@@ -171,8 +174,8 @@ mean.sd.norm <- function(data, mean, sd) {
   }
   return(tmp)
 }
-liver_wgs = mean.sd.norm(liver, mean.mut.wgs, sd.mut.wgs)
-liver_exo = mean.sd.norm(liver, mean.mut.exo, sd.mut.exo)
+COAD_US_wgs = mean.sd.norm(COAD_US, mean.mut.wgs, sd.mut.wgs)
+COAD_US_exo = mean.sd.norm(COAD_US, mean.mut.exo, sd.mut.exo)
 
 #Applinyg machine learning model to dataset
 library(mlr)
@@ -191,40 +194,40 @@ pred.test <- function(x, y, z, donor) {
   }
   return(tmp)
 }
-pred.test.liver_wgs = pred.test(mut.wgs.mod.list, liver_wgs, 'none', liver_list[[1]][,1])
-pred.test.liver_exo = pred.test(mut.exo.mod.list, liver_exo, 'none', liver_list[[1]][,1])
+pred.test.COAD_US_wgs = pred.test(mut.wgs.mod.list, COAD_US_wgs, 'none', COAD_US_list[[1]][,1])
+pred.test.COAD_US_exo = pred.test(mut.exo.mod.list, COAD_US_exo, 'none', COAD_US_list[[1]][,1])
 
-saveRDS(pred.test.liver_wgs, 'liver_wgs.RDS')
-saveRDS(pred.test.liver_exo, 'liver_exo.RDS')
+saveRDS(pred.test.COAD_US_wgs, 'COAD_US_wgs.RDS')
+saveRDS(pred.test.COAD_US_exo, 'COAD_US_exo.RDS')
 
 #Creating Bins
-liver_single$bin = ceiling(liver_single$chromosome_start / 1000000)
-liver_single$bin = paste(liver_single$chromosome, (liver_single$bin - 1), sep = '.')
-liver_single$bin = paste('chr', liver_single$bin, sep = '')
+COAD_US_single$bin = ceiling(COAD_US_single$chromosome_start / 1000000)
+COAD_US_single$bin = paste(COAD_US_single$chromosome, (COAD_US_single$bin - 1), sep = '.')
+COAD_US_single$bin = paste('chr', COAD_US_single$bin, sep = '')
 
 #Counting bins
-liver_single %>% 
-  group_by(icgc_sample_id, bin) %>%
-  summarise(no_rows = length(bin)) -> liver_bin_count
+COAD_US_single %>% 
+  group_by(icgc_donor_id, bin) %>%
+  summarise(no_rows = length(bin)) -> COAD_US_bin_count
 
 #Normalising bin counts 
-sample_count = aggregate(liver_bin_count$no_rows, by=list(liver_bin_count$icgc_sample_id), FUN=sum)
-colnames(sample_count) = c('icgc_sample_id', 'sample_total_count')
-liver_bin_count = merge(liver_bin_count, sample_count, by = 'icgc_sample_id', all = T)
-liver_bin_count$proportion = liver_bin_count$no_rows/liver_bin_count$sample_total_count
+sample_count = aggregate(COAD_US_bin_count$no_rows, by=list(COAD_US_bin_count$icgc_donor_id), FUN=sum)
+colnames(sample_count) = c('icgc_donor_id', 'sample_total_count')
+COAD_US_bin_count = merge(COAD_US_bin_count, sample_count, by = 'icgc_donor_id', all = T)
+COAD_US_bin_count$proportion = COAD_US_bin_count$no_rows/COAD_US_bin_count$sample_total_count
 
 #Converting bin counts to matrix
-liver_list[[4]] = dcast(liver_bin_count, icgc_sample_id ~ bin, value.var = 'proportion')
+COAD_US_list[[4]] = dcast(COAD_US_bin_count, icgc_donor_id ~ bin, value.var = 'proportion')
 
 #Converting NAs to 0
-liver_list = lapply(liver_list ,function(x) replace(x,is.na(x),0))
-liver_matrix[[4]] = liver_list[[4]]
+COAD_US_list = lapply(COAD_US_list ,function(x) replace(x,is.na(x),0))
+COAD_US_matrix[[4]] = COAD_US_list[[4]]
 
-liver_bin_exo = liver_matrix[[4]]
-liver_bin_wgs = liver_matrix[[4]]
+COAD_US_bin_exo = COAD_US_matrix[[4]]
+COAD_US_bin_wgs = COAD_US_matrix[[4]]
 
-colnames(liver_bin_wgs)[-1] = paste('SNV', colnames(liver_bin_wgs)[-1], sep = ".")
-colnames(liver_bin_exo)[-1] = paste('EXS', colnames(liver_bin_exo)[-1], sep = ".")
+colnames(COAD_US_bin_wgs)[-1] = paste('SNV', colnames(COAD_US_bin_wgs)[-1], sep = ".")
+colnames(COAD_US_bin_exo)[-1] = paste('EXS', colnames(COAD_US_bin_exo)[-1], sep = ".")
 
 ##WIP##
 #Add in missing columns to dfs
@@ -241,7 +244,10 @@ add.cols <- function(x, y) {
   return(tmp2)
 }
 
-liver_bin_wgs = add.cols(liver_bin_wgs, mean.snv.bins.wgs)
+COAD_US_bin_wgs = add.cols(COAD_US_bin_wgs, mean.snv.bins.wgs)
+
+#Saving bin data
+saveRDS(COAD_US_bin_wgs, 'COAD_US_bin_mut.RDS')
 
 #Normalising data with mean and sd
 mean.sd.norm <- function(data, mean, sd) {
@@ -252,12 +258,12 @@ mean.sd.norm <- function(data, mean, sd) {
   return(tmp)
 }
 
-liver_bin_wgs = mean.sd.norm(liver_bin_wgs, mean.snv.bins.wgs, sd.snv.bins.wgs)
+COAD_US_bin_wgs = mean.sd.norm(COAD_US_bin_wgs, mean.snv.bins.wgs, sd.snv.bins.wgs)
 
 #combining mutation info and bin snv counts
-liver_bin_wgs = cbind(liver_bin_wgs, liver_wgs)
+COAD_US_bin_wgs = cbind(COAD_US_bin_wgs, COAD_US_wgs)
 
-liver_bin_wgs[is.na(liver_bin_wgs)] <- 0
+COAD_US_bin_wgs[is.na(COAD_US_bin_wgs)] <- 0
 #Applying machine learning model to dataset
 library(mlr)
 library(randomForest)
@@ -275,9 +281,9 @@ pred.test <- function(model, data, class, donor) {
   }
   return(tmp)
 }
-pred.test.liver_bin_wgs = pred.test(mut.wgs.snv.mod.list, liver_bin_wgs, 'none', liver_matrix[[4]][,1])
+pred.test.COAD_US_bin_wgs = pred.test(mut.wgs.snv.mod.list, COAD_US_bin_wgs, 'none', COAD_US_matrix[[4]][,1])
 
 
-saveRDS(pred.test.liver_bin_wgs, 'liver_bin_wgs.RDS')
-save.image('liver_wgs.RData')
+saveRDS(pred.test.COAD_US_bin_wgs, 'COAD_US_bin_wgs.RDS')
+save.image('COAD_US_wgs.RData')
 
