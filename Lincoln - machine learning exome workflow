@@ -1,6 +1,7 @@
 ##R - Single matrix mutation type vs samples
+#Replace 'COAD_US' with relevant project code
 #Importing file
-COAD_US_sample = read.table(file = 'COAD-US.txt', header = T, sep = '\t')
+COAD_US_sample = read.table(file = 'COAD_US.txt', header = T, sep = '\t')
 
 #Only keeping single base substitutions
 COAD_US_single = COAD_US_sample[COAD_US_sample$mutation_type == 'single base substitution',]
