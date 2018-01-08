@@ -230,7 +230,6 @@ COAD_US_bin_wgs = COAD_US_matrix[[4]]
 colnames(COAD_US_bin_wgs)[-1] = paste('SNV', colnames(COAD_US_bin_wgs)[-1], sep = ".")
 colnames(COAD_US_bin_exo)[-1] = paste('EXS', colnames(COAD_US_bin_exo)[-1], sep = ".")
 
-##WIP##
 #Add in missing columns to dfs
 add.cols <- function(x, y) {
   tmp = setdiff(names(y), colnames(x))
